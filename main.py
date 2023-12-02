@@ -2,12 +2,33 @@ import tkinter as tk
 
 VERSION = '0.1.0'
 
+def read_file(file_path):
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            content = file.read()
+        return content
+    except FileNotFoundError:
+        return "Файл не найден"
+    except Exception as e:
+        return f"Ошибка чтения файла: {e}"
+
 def on_button_click():
     print("Кнопка была нажата!")
 
+
+file_content = read_file("Words.txt")
+russ_words = []
+chin_words = []
+for line in file_content.split('\n'):
+    if len(line) > 0:
+        c,r = line.split(' : ')
+        russ_words.append(r)
+        chin_words.append(c)
+        print(c + ' ---- ' + r)
+
 # Создаем главное окно
 root = tk.Tk()
-root.title("Chiness Trainer" + VERSION)
+root.title("Chiness Trainer " + VERSION)
 
 font_big = ("Arial", 56)  
 font_small = ("Arial", 18)  
