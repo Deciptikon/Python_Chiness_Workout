@@ -74,7 +74,7 @@ def on_button_next():
 
     first_step = True
 
-    indexes = generate_random_indexes()
+    indexes = generate_random_indexes(max=len(russ_words)-1)
     print(indexes)
     
     true_answer = random.randint(0, 3)
