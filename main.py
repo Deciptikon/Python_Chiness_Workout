@@ -118,7 +118,7 @@ font_score = ("Arial", 30)
 
 root.geometry("1000x600+400+200")
 
-label_text = tk.Label(root, text="___", font=font_big)
+label_text = tk.Label(root, text="[***]", font=font_big)
 label_text.pack(pady=10)
 
 label_score_positive = tk.Label(root, text=f'+{data_score_positive}', font=font_score)
