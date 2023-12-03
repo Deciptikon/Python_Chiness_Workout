@@ -110,7 +110,7 @@ for line in file_content.split('\n'):
 
 
 root = tk.Tk()
-root.title("Chiness Trainer " + VERSION)
+root.title(f"Chiness Trainer {VERSION}")
 
 font_big = ("Arial", 100)  
 font_small = ("Arial", 18)  
@@ -118,14 +118,16 @@ font_score = ("Arial", 30)
 
 root.geometry("1000x600+400+200")
 
-############################################################################
 
 # Создаем виджет вкладок
 notebook = ttk.Notebook(root)
 
+
+############################################################################
 # Вкладка 1
+
 tab1 = ttk.Frame(notebook)
-notebook.add(tab1, text='Вкладка 1')
+notebook.add(tab1, text='4 варианта')
 
 
 label_text = tk.Label(tab1, text="[***]", font=font_big)
@@ -163,20 +165,20 @@ button_next.pack(side=tk.RIGHT, anchor=tk.SE)
 root.bind('<space>', space_event)
 
 
+############################################################################
+# Вкладка 2
 
+tab2 = ttk.Frame(notebook)
+notebook.add(tab2, text='Письменный')
 
 ############################################################################
+# Вкладка 3
 
-# Вкладка 2
-tab2 = ttk.Frame(notebook)
-notebook.add(tab2, text='Вкладка 2')
+tab3 = ttk.Frame(notebook)
+notebook.add(tab3, text='Динамический')
+
+############################################################################
 
 notebook.pack(expand=50, fill='both')
-
-############################################################################
-
-
-
-
 
 root.mainloop()
