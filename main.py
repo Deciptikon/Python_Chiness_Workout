@@ -84,6 +84,14 @@ def on_button_next():
         button.config(text=russ_words[ind], bg=color_gray)
         i += 1
 
+def space_event(event):
+    button_next.invoke()
+
+def num_event(event):
+    i = int(event.keysym) - 1
+    buttons[i].invoke()
+
+
 
 file_content = read_file("Words.txt")
 russ_words = []
@@ -127,7 +135,9 @@ for i in range(0, 4):
                        width=50)
     #button.pack(side=tk.LEFT, padx=10)
     button.grid(row=i, column=0, pady=10, padx=10 )
+    root.bind(str(i+1), num_event)
     buttons.append(button)
+
 
 button_next = tk.Button(root, text=f"Next", 
                         command=lambda: on_button_next(), 
@@ -135,8 +145,9 @@ button_next = tk.Button(root, text=f"Next",
                         width=200, height=50,
                         bg='#DDDDDD')
 button_next.pack(side=tk.RIGHT, anchor=tk.SE)
+root.bind('<space>', space_event)
 
-cut_str()
+#root.bind("<Space>", lambda: button_next.)
 
 
 root.mainloop()
