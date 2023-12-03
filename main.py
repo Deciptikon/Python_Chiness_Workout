@@ -54,7 +54,7 @@ def on_button_click(button_number):
         bt.config(bg=color_green)
         if first_step:
             data_score += 1
-            label_score.config(text=f'Score = {data_score}')
+            label_score.config(text=f'+{data_score}')
     else:
         bt = buttons[button_number]
         bt.config(bg=color_red)
@@ -109,18 +109,15 @@ root.title("Chiness Trainer " + VERSION)
 
 font_big = ("Arial", 100)  
 font_small = ("Arial", 18)  
-
+font_score = ("Arial", 30)  
 
 root.geometry("1000x600+400+200")
 
 label_text = tk.Label(root, text="___", font=font_big)
 label_text.pack(pady=10)
 
-label_score = tk.Label(root, text=f'Score = {data_score}', font=font_small)
+label_score = tk.Label(root, text=f'+{data_score}', font=font_score)
 label_score.place(x = 25, y = 50)
-
-#button1 = tk.Button(root, text="Кнопка 1", command=on_button_click, font=font_small)
-#button1.pack(side="top", padx=100, pady=100) 
 
 
 frame = tk.Frame(root)
