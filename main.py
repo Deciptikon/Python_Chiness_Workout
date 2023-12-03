@@ -17,6 +17,17 @@ first_step: bool = True
 def generate_random_indexes(min: int = 0, max: int = 7, num: int = 4) -> list[int]:
     return random.sample(range(min, max + 1), num)
 
+def cut_str(long_str: str = '', max_len: int = 50, slice_symbol: str = ','):
+    slices_str = long_str.split(slice_symbol)
+
+    short_str = ''
+    for s in slices_str:
+        if len(short_str + s) < max_len:
+            short_str += s + slice_symbol
+        else:
+            break
+
+    return short_str[:len(short_str)-1]
 
 
 def read_file(file_path):
@@ -30,7 +41,6 @@ def read_file(file_path):
         return f"Ошибка чтения файла: {e}"
 
 def on_button_click(button_number):
-    print(F"Кнопка {button_number} была нажата!")
     color_green = "#00AA55"
     color_red = "#AA2222"
 
@@ -52,8 +62,7 @@ def on_button_click(button_number):
     first_step = False
 
 def on_button_next():
-    print(F"NEXT -->")
-    color_gray = "#999999"
+    color_gray = "#DDDDDD"
 
     global true_answer
     global first_step
@@ -76,17 +85,13 @@ def on_button_next():
         i += 1
 
 
-
-
-
-
 file_content = read_file("Words.txt")
 russ_words = []
 chin_words = []
 for line in file_content.split('\n'):
     if len(line) > 0:
         c,r = line.split(' : ')
-        russ_words.append(r)
+        russ_words.append(cut_str(long_str=r, max_len=50, slice_symbol=','))
         chin_words.append(c)
         print(c + ' ---- ' + r)
 
@@ -100,7 +105,7 @@ font_small = ("Arial", 18)
 
 root.geometry("1000x600+200+100")
 
-label_text = tk.Label(root, text="著名", font=font_big)
+label_text = tk.Label(root, text="___", font=font_big)
 label_text.pack(pady=10)
 
 label_score = tk.Label(root, text=f'Score = {data_score}', font=font_small)
@@ -115,15 +120,23 @@ frame.pack(side=tk.TOP, pady=10)
 
 buttons = []
 for i in range(0, 4):
-    button = tk.Button(frame, text=f"Кнопка {i}", command=lambda num=i: on_button_click(num), font=font_small, padx=200)
+    button = tk.Button(frame, text=f"****", 
+                       command=lambda num=i: on_button_click(num), 
+                       font=font_small, 
+                       padx=10,
+                       width=50)
     #button.pack(side=tk.LEFT, padx=10)
     button.grid(row=i, column=0, pady=10, padx=10 )
     buttons.append(button)
 
-button_next = tk.Button(root, text=f"Next", command=lambda: on_button_next(), font=font_small, width=200, height=100)
-button_next.pack(side=tk.RIGHT, anchor=tk.SE, padx=0, pady=0)
+button_next = tk.Button(root, text=f"Next", 
+                        command=lambda: on_button_next(), 
+                        font=font_small, 
+                        width=200, height=50,
+                        bg='#DDDDDD')
+button_next.pack(side=tk.RIGHT, anchor=tk.SE)
 
-
+cut_str()
 
 
 root.mainloop()
