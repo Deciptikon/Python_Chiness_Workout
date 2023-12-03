@@ -1,10 +1,17 @@
 import tkinter as tk
 import random
 
-VERSION = '0.1.2'
+VERSION = '0.1.3'
 
+# счёт правильных ответов
 data_score: int = 0
+
+# скрытвй параметр, номер верного ответа
 true_answer: int = 0
+
+# скрытый параметр, первый ход, первое нажатие
+first_step: bool = True
+
 
 # генерируем несколько различных целых чисел
 def generate_random_indexes(min: int = 0, max: int = 7, num: int = 4) -> list[int]:
@@ -24,12 +31,38 @@ def read_file(file_path):
 
 def on_button_click(button_number):
     print(F"Кнопка {button_number} была нажата!")
+    color_green = "#00AA55"
+    color_red = "#AA2222"
+
+    global data_score
+    global true_answer
+    global first_step
+    
+
+    if button_number == true_answer:
+        bt = buttons[button_number]
+        bt.config(bg=color_green)
+        if first_step:
+            data_score += 1
+            label_score.config(text=f'Score = {data_score}')
+    else:
+        bt = buttons[button_number]
+        bt.config(bg=color_red)
+    
+    first_step = False
 
 def on_button_next():
     print(F"NEXT -->")
+    color_gray = "#999999"
+
+    global true_answer
+    global first_step
+
+    first_step = True
+
     indexes = generate_random_indexes()
     print(indexes)
-    global true_answer
+    
     true_answer = random.randint(0, 3)
     print(true_answer)
 
@@ -39,7 +72,7 @@ def on_button_next():
     i: int = 0
     for button in buttons:
         ind = indexes[i]
-        button.config(text=russ_words[ind])
+        button.config(text=russ_words[ind], bg=color_gray)
         i += 1
 
 
@@ -81,10 +114,10 @@ frame = tk.Frame(root)
 frame.pack(side=tk.TOP, pady=10)
 
 buttons = []
-for i in range(1, 5):
+for i in range(0, 4):
     button = tk.Button(frame, text=f"Кнопка {i}", command=lambda num=i: on_button_click(num), font=font_small, padx=200)
     #button.pack(side=tk.LEFT, padx=10)
-    button.grid(row=i-1, column=0, pady=10, padx=10 )
+    button.grid(row=i, column=0, pady=10, padx=10 )
     buttons.append(button)
 
 button_next = tk.Button(root, text=f"Next", command=lambda: on_button_next(), font=font_small, width=200, height=100)
