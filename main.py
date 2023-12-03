@@ -1,10 +1,13 @@
 import tkinter as tk
 import random
 
-VERSION = '0.1.4'
+VERSION = '0.1.5'
 
 # счёт правильных ответов
-data_score: int = 0
+data_score_positive: int = 0
+
+# счёт НЕправильных ответов
+data_score_negative: int = 0
 
 # скрытвй параметр, номер верного ответа
 true_answer: int = 0
@@ -19,14 +22,12 @@ def generate_random_indexes(min: int = 0, max: int = 7, num: int = 4) -> list[in
 
 def cut_str(long_str: str = '', max_len: int = 50, slice_symbol: str = ','):
     slices_str = long_str.split(slice_symbol)
-
     short_str = ''
     for s in slices_str:
         if len(short_str + s) < max_len:
             short_str += s + slice_symbol
         else:
             break
-
     return short_str[:len(short_str)-1]
 
 
@@ -44,7 +45,8 @@ def on_button_click(button_number):
     color_green = "#00AA55"
     color_red = "#AA2222"
 
-    global data_score
+    global data_score_positive
+    global data_score_negative
     global true_answer
     global first_step
     
@@ -53,11 +55,14 @@ def on_button_click(button_number):
         bt = buttons[button_number]
         bt.config(bg=color_green)
         if first_step:
-            data_score += 1
-            label_score.config(text=f'+{data_score}')
+            data_score_positive += 1
+            label_score_positive.config(text=f'+{data_score_positive}')
     else:
         bt = buttons[button_number]
         bt.config(bg=color_red)
+        if first_step:
+            data_score_negative += 1
+            label_score_negative.config(text=f'-{data_score_negative}')
     
     first_step = False
 
@@ -116,8 +121,11 @@ root.geometry("1000x600+400+200")
 label_text = tk.Label(root, text="___", font=font_big)
 label_text.pack(pady=10)
 
-label_score = tk.Label(root, text=f'+{data_score}', font=font_score)
-label_score.place(x = 25, y = 50)
+label_score_positive = tk.Label(root, text=f'+{data_score_positive}', font=font_score)
+label_score_positive.place(x = 25, y = 50)
+
+label_score_negative = tk.Label(root, text=f'-{data_score_negative}', font=font_score)
+label_score_negative.place(x = 25, y = 100)
 
 
 frame = tk.Frame(root)
