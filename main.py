@@ -1,7 +1,8 @@
 import tkinter as tk
+from tkinter import ttk
 import random
 
-VERSION = '0.1.5'
+VERSION = '0.2.0'
 
 # счёт правильных ответов
 data_score_positive: int = 0
@@ -50,7 +51,6 @@ def on_button_click(button_number):
     global true_answer
     global first_step
     
-
     if button_number == true_answer:
         bt = buttons[button_number]
         bt.config(bg=color_green)
@@ -118,17 +118,27 @@ font_score = ("Arial", 30)
 
 root.geometry("1000x600+400+200")
 
-label_text = tk.Label(root, text="[***]", font=font_big)
+############################################################################
+
+# Создаем виджет вкладок
+notebook = ttk.Notebook(root)
+
+# Вкладка 1
+tab1 = ttk.Frame(notebook)
+notebook.add(tab1, text='Вкладка 1')
+
+
+label_text = tk.Label(tab1, text="[***]", font=font_big)
 label_text.pack(pady=10)
 
-label_score_positive = tk.Label(root, text=f'+{data_score_positive}', font=font_score)
+label_score_positive = tk.Label(tab1, text=f'+{data_score_positive}', font=font_score)
 label_score_positive.place(x = 10, y = 50)
 
-label_score_negative = tk.Label(root, text=f' -{data_score_negative}', font=font_score)
+label_score_negative = tk.Label(tab1, text=f' -{data_score_negative}', font=font_score)
 label_score_negative.place(x = 10, y = 100)
 
 
-frame = tk.Frame(root)
+frame = tk.Frame(tab1)
 frame.pack(side=tk.TOP, pady=10)
 
 buttons = []
@@ -144,13 +154,29 @@ for i in range(0, 4):
     buttons.append(button)
 
 
-button_next = tk.Button(root, text=f"Next", 
+button_next = tk.Button(tab1, text=f"Next", 
                         command=lambda: on_button_next(), 
                         font=font_small, 
                         width=200, height=50,
                         bg='#DDDDDD')
 button_next.pack(side=tk.RIGHT, anchor=tk.SE)
 root.bind('<space>', space_event)
+
+
+
+
+############################################################################
+
+# Вкладка 2
+tab2 = ttk.Frame(notebook)
+notebook.add(tab2, text='Вкладка 2')
+
+notebook.pack(expand=50, fill='both')
+
+############################################################################
+
+
+
 
 
 root.mainloop()
