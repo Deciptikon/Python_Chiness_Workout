@@ -1,7 +1,7 @@
 import tkinter as tk
 import random
 
-VERSION = '0.1.3'
+VERSION = '0.1.4'
 
 # счёт правильных ответов
 data_score: int = 0
@@ -103,7 +103,7 @@ font_big = ("Arial", 100)
 font_small = ("Arial", 18)  
 
 
-root.geometry("1000x600+200+100")
+root.geometry("1000x600+400+200")
 
 label_text = tk.Label(root, text="___", font=font_big)
 label_text.pack(pady=10)
