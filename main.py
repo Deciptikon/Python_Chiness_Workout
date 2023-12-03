@@ -62,7 +62,7 @@ def on_button_click(button_number):
         bt.config(bg=color_red)
         if first_step:
             data_score_negative += 1
-            label_score_negative.config(text=f'-{data_score_negative}')
+            label_score_negative.config(text=f' -{data_score_negative}')
     
     first_step = False
 
@@ -122,10 +122,10 @@ label_text = tk.Label(root, text="___", font=font_big)
 label_text.pack(pady=10)
 
 label_score_positive = tk.Label(root, text=f'+{data_score_positive}', font=font_score)
-label_score_positive.place(x = 25, y = 50)
+label_score_positive.place(x = 10, y = 50)
 
-label_score_negative = tk.Label(root, text=f'-{data_score_negative}', font=font_score)
-label_score_negative.place(x = 25, y = 100)
+label_score_negative = tk.Label(root, text=f' -{data_score_negative}', font=font_score)
+label_score_negative.place(x = 10, y = 100)
 
 
 frame = tk.Frame(root)
@@ -151,8 +151,6 @@ button_next = tk.Button(root, text=f"Next",
                         bg='#DDDDDD')
 button_next.pack(side=tk.RIGHT, anchor=tk.SE)
 root.bind('<space>', space_event)
-
-#root.bind("<Space>", lambda: button_next.)
 
 
 root.mainloop()
