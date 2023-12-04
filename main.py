@@ -212,6 +212,11 @@ font_score = ("Arial", 30)
 
 root.geometry("1000x600+400+200")
 
+style = ttk.Style()
+style.theme_use('default')
+style.configure('TNotebook.Tab', background="White")
+style.map("TNotebook", background= [("selected", "White")])
+
 ############################################################################
 # Создаем меню
 
@@ -247,18 +252,20 @@ notebook = ttk.Notebook(root)
 tab1 = ttk.Frame(notebook)
 notebook.add(tab1, text=' Тестовый ')
 
+frame_base1 = tk.Frame(tab1)
+frame_base1.pack(expand=1, fill='both')
 
-label_text1 = tk.Label(tab1, text="[***]", font=font_big)
+
+label_text1 = tk.Label(frame_base1, text="[***]", font=font_big)
 label_text1.pack(pady=10)
 
-label_score_positive1 = tk.Label(tab1, text=f'+{data_score_positive}', font=font_score)
+label_score_positive1 = tk.Label(frame_base1, text=f'+{data_score_positive}', font=font_score)
 label_score_positive1.place(x = 10, y = 50)
 
-label_score_negative1 = tk.Label(tab1, text=f' -{data_score_negative}', font=font_score)
+label_score_negative1 = tk.Label(frame_base1, text=f' -{data_score_negative}', font=font_score)
 label_score_negative1.place(x = 10, y = 100)
 
-
-frame1 = tk.Frame(tab1)
+frame1 = tk.Frame(frame_base1)
 frame1.pack(side=tk.TOP, pady=10)
 
 buttons = []
@@ -289,29 +296,29 @@ button_next1.pack(side=tk.RIGHT, anchor=tk.SE)
 tab2 = ttk.Frame(notebook)
 notebook.add(tab2, text=' Письменный ')
 
-frame2 = tk.Frame(tab2)
-frame2.pack(side=tk.TOP, pady=10)
+frame_base2 = tk.Frame(tab2)
+frame_base2.pack(expand=1, fill='both')
 
-label_text2 = tk.Label(frame2, text="[***]", font=font_big)
+label_text2 = tk.Label(frame_base2, text="[***]", font=font_big)
 label_text2.pack(pady=10)
 
-label_score_positive2 = tk.Label(frame2, text=f'+{data_score_positive}', font=font_score)
+label_score_positive2 = tk.Label(frame_base2, text=f'+{data_score_positive}', font=font_score)
 label_score_positive2.place(x = 10, y = 50)
 
-label_score_negative2 = tk.Label(frame2, text=f' -{data_score_negative}', font=font_score)
+label_score_negative2 = tk.Label(frame_base2, text=f' -{data_score_negative}', font=font_score)
 label_score_negative2.place(x = 10, y = 100)
 
-text_input = tk.Entry(frame2, font=font_small, bg='#DDDDDD', width=200)
+text_input = tk.Entry(frame_base2, font=font_small, bg='#DDDDDD', width=200)
 text_input.pack(pady=10, padx=100)
 
-button_check = tk.Button(frame2, text=f"Check", 
+button_check = tk.Button(frame_base2, text=f"Check", 
                         command=lambda: on_button_check(), 
                         font=font_small, 
                         width=200, #height=50,
                         bg='#DDDDDD')
 button_check.pack( pady=10, padx=50 )
 
-label_text_checker = tk.Label(frame2, text="Введите перевод по памяти.\n", font=font_small)
+label_text_checker = tk.Label(frame_base2, text="Введите перевод по памяти.\n", font=font_small)
 label_text_checker.pack(pady=50)
 
 
@@ -328,6 +335,9 @@ button_next2.pack(side=tk.BOTTOM, anchor=tk.SE, pady=0)
 
 tab3 = ttk.Frame(notebook)
 notebook.add(tab3, text=' Адаптивный ')
+
+frame_base3 = tk.Frame(tab3)
+frame_base3.pack(expand=1, fill='both')
 
 ############################################################################
 
