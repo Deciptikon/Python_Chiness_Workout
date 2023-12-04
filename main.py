@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, filedialog
 import random
 
 VERSION = '0.2.3'
@@ -20,11 +20,59 @@ true_answer: int = 0
 # скрытый параметр, первый ход, первое нажатие
 first_step: bool = True
 
+# Массивы содержащие распарсенный словарь
+russ_words: list[str] = []
+chin_words: list[str] = []
+
 def on_about_program():
     print('About ....')
+    open_modal_window()
 
 def on_open_file():
+    global russ_words
+    global chin_words
     print('Open Fire, sorry... File')
+    file_path = filedialog.askopenfilename(title='Open Fire, sorry... File', 
+                                           filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
+    if file_path:
+        print(f"Выбранный файл: {file_path}")
+    
+    file_content = read_file(file_path)
+    russ_words, chin_words = parse_dictonary(file_content)
+
+
+def open_modal_window():
+    modal_window = tk.Toplevel(root)
+
+    modal_window.title("О программе")
+    modal_window.geometry("500x600+650+200")
+
+    label = tk.Label(modal_window, 
+                     text=F"""Это простой тренер китайского языка.
+
+В нём имеются 3 режима обучения:
+ - на основе тестирования;                            
+ - на сонове памяти;                                      
+ - на основе адаптированного подбора слов;
+ 
+ Текущая версия программы {VERSION}.
+ 
+ Программа абсолютно бесплатна ;-)
+
+
+
+ Адрес для связи по любым ВАЖНЫМ вопросам:
+ email: deciptikon@mail.ru
+ 
+ """)
+    
+    label.pack(padx=20, pady=20)
+
+    # Устанавливаем родительское окно для модального окна
+    modal_window.transient(root)
+
+    # Ожидаем закрытия модального окна перед возвращением к основному окну
+    modal_window.wait_window(modal_window)
 
 # генерируем несколько различных целых чисел
 def generate_random_indexes(min: int = 0, max: int = 7, num: int = 4) -> list[int]:
@@ -113,7 +161,6 @@ def on_button_next2():
     label_text_checker.config(text="Введите перевод по памяти.\n")
 
 
-
 def on_button_check():
     global data_score_positive
     global data_score_negative
@@ -146,9 +193,6 @@ def on_button_check():
         button_check.config(bg=COLOR_RED)
         label_text_checker.config(text=f'ОШИБКА, должно быть:\n\"{true_words}\"')
 
-
-
-            
 
 def space_event(event):
     match notebook.index(notebook.select()):
@@ -191,15 +235,19 @@ def on_tab_changed(event):
 
 
 
-file_content = read_file("Words.txt")
-russ_words: list[str] = []
-chin_words: list[str] = []
-for line in file_content.split('\n'):
-    if len(line) > 0:
-        c,r = line.split(' : ')
-        russ_words.append(cut_str(long_str=r, max_len=50, slice_symbol=','))
-        chin_words.append(c)
-        print(c + ' ---- ' + r)
+
+
+def parse_dictonary(file_dictonary: str) -> [list[str], list[str]]:
+    russ: list[str] = []
+    chin: list[str] = []
+    for line in file_dictonary.split('\n'):
+        if len(line.strip()) > 0:
+            c,r = line.split(' : ')
+            russ.append(cut_str(long_str=r, max_len=50, slice_symbol=','))
+            chin.append(c)
+            print(c + ' ---- ' + r)
+    return russ, chin
+
 
 
 
@@ -216,6 +264,9 @@ style = ttk.Style()
 style.theme_use('default')
 style.configure('TNotebook.Tab', background="White")
 style.map("TNotebook", background= [("selected", "White")])
+
+file_content = read_file("Words.txt")
+russ_words, chin_words = parse_dictonary(file_content)
 
 ############################################################################
 # Создаем меню
