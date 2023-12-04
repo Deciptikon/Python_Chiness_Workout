@@ -16,8 +16,11 @@
 
 # Screens  
 ## Обучение на основе тестирования
-![Обучение на основе тестирования](https://github.com/Deciptikon/Python_Chiness_Workout/blob/main/Screens/v0.2.2/0.jpg)  
-
+![Обучение на основе тестирования](https://github.com/Deciptikon/Python_Chiness_Workout/blob/main/Screens/v0.2.3/0.jpg)  
+## Обучение на основе тестирования
+![Обучение на основе тестирования](https://github.com/Deciptikon/Python_Chiness_Workout/blob/main/Screens/v0.2.3/1.jpg)  
 
 ## Обучение на основе памяти
-![Обучение на основе памяти](https://github.com/Deciptikon/Python_Chiness_Workout/blob/main/Screens/v0.2.2/1.jpg)  
+![Обучение на основе памяти](https://github.com/Deciptikon/Python_Chiness_Workout/blob/main/Screens/v0.2.3/2.jpg)  
+## Обучение на основе памяти
+![Обучение на основе памяти](https://github.com/Deciptikon/Python_Chiness_Workout/blob/main/Screens/v0.2.3/3.jpg)  
