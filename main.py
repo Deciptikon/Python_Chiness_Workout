@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import random
 
-VERSION = '0.2.2'
+VERSION = '0.2.3'
 
 COLOR_GREEN = "#00AA55"
 COLOR_RED   = "#AA2222"
@@ -20,6 +20,11 @@ true_answer: int = 0
 # скрытый параметр, первый ход, первое нажатие
 first_step: bool = True
 
+def on_about_program():
+    print('About ....')
+
+def on_open_file():
+    print('Open Fire, sorry... File')
 
 # генерируем несколько различных целых чисел
 def generate_random_indexes(min: int = 0, max: int = 7, num: int = 4) -> list[int]:
@@ -207,10 +212,34 @@ font_score = ("Arial", 30)
 
 root.geometry("1000x600+400+200")
 
+############################################################################
+# Создаем меню
 
-# Создаем виджет вкладок
+menu_bar = tk.Menu(root)
+
+# Создаем подменю "Файл"
+file_menu = tk.Menu(menu_bar, tearoff=0)
+file_menu.add_command(label="Открыть", command=on_open_file)
+#file_menu.add_command(label="Сохранить", command=on_menu_click)
+file_menu.add_separator()
+file_menu.add_command(label="Выход", command=root.destroy)
+# Добавляем подменю "Файл" к основному меню
+menu_bar.add_cascade(label="Файл", menu=file_menu)
+
+
+# Создаем подменю "Помощь"
+help_menu = tk.Menu(menu_bar, tearoff=0)
+help_menu.add_command(label="О программе", command=on_about_program)
+
+# Добавляем подменю "Помощь" к основному меню
+menu_bar.add_cascade(label="Помощь", menu=help_menu)
+
+# Устанавливаем основное меню для главного окна
+root.config(menu=menu_bar)
+
+
+# Создаем виджет вкладок ###################################################
 notebook = ttk.Notebook(root)
-
 
 ############################################################################
 # Вкладка 1
