@@ -24,10 +24,12 @@ first_step: bool = True
 russ_words: list[str] = []
 chin_words: list[str] = []
 
+# Процедура открытия окнв с информацией о программе
 def on_about_program():
     print('About ....')
-    open_modal_window()
+    open_about_window()
 
+# Открывает меню выбора нового словаря
 def on_open_file():
     global russ_words
     global chin_words
@@ -40,8 +42,8 @@ def on_open_file():
     file_content = read_file(file_path)
     russ_words, chin_words = parse_dictonary(file_content)
 
-
-def open_modal_window():
+# Открывает модальное окно с информацией о программе
+def open_about_window():
     modal_window = tk.Toplevel(root)
 
     modal_window.title("О программе")
@@ -78,6 +80,8 @@ def open_modal_window():
 def generate_random_indexes(min: int = 0, max: int = 7, num: int = 4) -> list[int]:
     return random.sample(range(min, max + 1), num)
 
+# Сокращает строку до ближайшего символа slice_symbol с конца, 
+# причём длина строки не будет превышать max_len
 def cut_str(long_str: str = '', max_len: int = 50, slice_symbol: str = ','):
     slices_str = long_str.split(slice_symbol)
     short_str = ''
@@ -88,7 +92,7 @@ def cut_str(long_str: str = '', max_len: int = 50, slice_symbol: str = ','):
             break
     return short_str[:len(short_str)-1]
 
-
+# Открытие файла
 def read_file(file_path):
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
@@ -99,6 +103,7 @@ def read_file(file_path):
     except Exception as e:
         return f"Ошибка чтения файла: {e}"
 
+# Действие 4-х кнопок на первой вкладке (режим Тестовый)
 def on_button_click(button_number):
     global COLOR_GREEN 
     global COLOR_RED 
@@ -123,6 +128,7 @@ def on_button_click(button_number):
     
     first_step = False
 
+# Действие на первой вкладке (режим Тестирование)
 def on_button_next():
     global COLOR_GRAY
 
@@ -146,6 +152,7 @@ def on_button_next():
         button.config(text=russ_words[ind], bg=COLOR_GRAY)
         i += 1
 
+# Действие кнопки Next на второй вкладке (режим письменный)
 def on_button_next2():
     global true_answer
     global first_step
@@ -160,7 +167,7 @@ def on_button_next2():
     button_check.config(bg=COLOR_GRAY)
     label_text_checker.config(text="Введите перевод по памяти.\n")
 
-
+# Действие при нажатии на кнопку проверки (в письменном режиме)
 def on_button_check():
     global data_score_positive
     global data_score_negative
@@ -193,7 +200,7 @@ def on_button_check():
         button_check.config(bg=COLOR_RED)
         label_text_checker.config(text=f'ОШИБКА, должно быть:\n\"{true_words}\"')
 
-
+# Действие при нажатии на Space
 def space_event(event):
     match notebook.index(notebook.select()):
         case 0:
@@ -204,7 +211,7 @@ def space_event(event):
         case 2:
             pass
         
-
+# Действие нажатия на Enter
 def enter_event(event):
     match notebook.index(notebook.select()):
         case 0:
@@ -218,6 +225,7 @@ def enter_event(event):
         case 2:
             pass
 
+# действия при нажатии на цифровые клавиши
 def num_event1(event):
     match notebook.index(notebook.select()):
         case 0:
@@ -234,9 +242,6 @@ def on_tab_changed(event):
     print(f"Активная вкладка: {selected_tab}")
 
 
-
-
-
 def parse_dictonary(file_dictonary: str) -> [list[str], list[str]]:
     russ: list[str] = []
     chin: list[str] = []
@@ -245,11 +250,11 @@ def parse_dictonary(file_dictonary: str) -> [list[str], list[str]]:
             c,r = line.split(' : ')
             russ.append(cut_str(long_str=r, max_len=50, slice_symbol=','))
             chin.append(c)
-            print(c + ' ---- ' + r)
     return russ, chin
 
-
-
+################################################################################
+############  Тело GUI  ########################################################
+################################################################################
 
 root = tk.Tk()
 root.title(f"Chiness Trainer {VERSION}")
@@ -268,22 +273,21 @@ style.map("TNotebook", background= [("selected", "White")])
 file_content = read_file("Words.txt")
 russ_words, chin_words = parse_dictonary(file_content)
 
-############################################################################
-# Создаем меню
+# Создаем меню  ############################################################
 
 menu_bar = tk.Menu(root)
 
-# Создаем подменю "Файл"
+# Создаем подменю "Файл" ###################################################
 file_menu = tk.Menu(menu_bar, tearoff=0)
 file_menu.add_command(label="Открыть", command=on_open_file)
 #file_menu.add_command(label="Сохранить", command=on_menu_click)
 file_menu.add_separator()
 file_menu.add_command(label="Выход", command=root.destroy)
-# Добавляем подменю "Файл" к основному меню
+# Добавляем подменю "Файл" к основному меню 
 menu_bar.add_cascade(label="Файл", menu=file_menu)
 
 
-# Создаем подменю "Помощь"
+# Создаем подменю "Помощь" #################################################
 help_menu = tk.Menu(menu_bar, tearoff=0)
 help_menu.add_command(label="О программе", command=on_about_program)
 
