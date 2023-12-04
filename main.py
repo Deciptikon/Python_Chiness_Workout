@@ -245,7 +245,7 @@ notebook = ttk.Notebook(root)
 # Вкладка 1
 
 tab1 = ttk.Frame(notebook)
-notebook.add(tab1, text=' 4 варианта ')
+notebook.add(tab1, text=' Тестовый ')
 
 
 label_text1 = tk.Label(tab1, text="[***]", font=font_big)
@@ -327,7 +327,7 @@ button_next2.pack(side=tk.BOTTOM, anchor=tk.SE, pady=0)
 # Вкладка 3
 
 tab3 = ttk.Frame(notebook)
-notebook.add(tab3, text=' Динамический ')
+notebook.add(tab3, text=' Адаптивный ')
 
 ############################################################################
 
