@@ -3,6 +3,7 @@ from tkinter import ttk, filedialog
 import random
 
 VERSION = '0.2.3'
+NAME_PROGRAM = 'Chinese Trainer'
 
 COLOR_GREEN = "#00AA55"
 COLOR_RED   = "#AA2222"
@@ -257,7 +258,7 @@ def parse_dictonary(file_dictonary: str) -> [list[str], list[str]]:
 ################################################################################
 
 root = tk.Tk()
-root.title(f"Chiness Trainer {VERSION}")
+root.title(f'{NAME_PROGRAM} {VERSION}')
 
 font_big = ("Arial", 100)  
 font_small = ("Arial", 18)  
