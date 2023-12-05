@@ -257,6 +257,7 @@ def parse_dictonary(file_dictonary: str) -> [list[str], list[str]]:
 ############  Тело GUI  ########################################################
 ################################################################################
 
+
 root = tk.Tk()
 root.title(f'{NAME_PROGRAM} {VERSION}')
 
