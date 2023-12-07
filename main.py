@@ -26,17 +26,56 @@ first_step: bool = True
 russ_words: list[str] = []
 chin_words: list[str] = []
 
+class BaseStateMachine:
+    def __init__(self, window, notebook, russ_dict: list[str], chin_dict: list[str]):
+        self.window = window
+        self.notebook = notebook
+        self.russ_words = russ_dict
+        self.chin_words = chin_dict
 
-# Class BrainMachine ######################################################################
-class BrainMachine(object):
+        self.selected_tab = 0
 
-    true_answer = 0
-    first_step = 0
+        self.window.bind('<space>', self.space_event)
+        self.window.bind('<Return>', self.enter_event)
+        self.notebook.bind("<<NotebookTabChanged>>", self.on_tab_changed)
+    
+    # Действие при нажатии на Space
+    def space_event(self, event):
+        pass
 
-    data_score_positive = 0
-    data_score_negative = 0
+    # Действие нажатия на Enter
+    def enter_event(self, event):
+        pass
+
+    # Это не особо нужно и наверное я удалю это
+    def on_tab_changed(self, event):
+        self.selected_tab = self.notebook.index(self.notebook.select())
+        print(f"Активная вкладка: {self.selected_tab}")
+
+# Class TestMachine ######################################################################
+class TestMachine(BaseStateMachine, object):
+
+    true_answer: int = 0
+    first_step: bool = True
+
+    data_score_positive: int = 0
+    data_score_negative: int = 0
 
     def __init__(self, window, notebook, russ_dict: list[str], chin_dict: list[str]):
+        super().__init__( window, notebook, russ_dict, chin_dict)
+
+
+# Class BrainMachine ######################################################################
+class BrainMachine(BaseStateMachine, object):
+
+    true_answer: int = 0
+    first_step: bool = True
+
+    data_score_positive: int = 0
+    data_score_negative: int = 0
+
+    def __init__(self, window, notebook, russ_dict: list[str], chin_dict: list[str]):
+        super().__init__( window, notebook, russ_dict, chin_dict)
         
         states_brain_machine = ['Basic', 'Answer', 'True_answer', 'False_answer']
         transitions_brain_machine = [
@@ -52,12 +91,7 @@ class BrainMachine(object):
                               transitions=transitions_brain_machine, 
                               initial='Basic')
         
-        self.window = window
-        self.notebook = notebook
-        self.russ_words = russ_dict
-        self.chin_words = chin_dict
-
-
+        
         self.tab2 = ttk.Frame(self.notebook)
         self.notebook.add(self.tab2, text=' Письменный ')
 
@@ -77,7 +111,7 @@ class BrainMachine(object):
         self.text_input.pack(pady=10, padx=100)
 
         self.button_check = tk.Button(self.frame_base2, text=f"Check", 
-                                command=lambda: on_button_check(), 
+                                command=lambda: self.on_button_check(), 
                                 font=font_small, 
                                 width=200, #height=50,
                                 bg='#DDDDDD')
@@ -94,52 +128,80 @@ class BrainMachine(object):
                         bg='#DDDDDD')
         self.button_next2.pack(side=tk.BOTTOM, anchor=tk.SE, pady=0)
     
-    # Callback-метод, вызываемый при входе в состояние Состояние1.1
-    def on_enter_Answer(self):
-        print("Вы вошли в состояние Answer")
-
-    # Callback-метод, вызываемый при выходе из состояния Состояние1.1
-    def on_exit_Answer(self):
-        print("Вы вышли из состояния Answer")
-
-    # Действие кнопки Next на второй вкладке (режим письменный)
-    def on_button_next2(self):
+    # Callback-метод, вызываемый при входе в состояние Basic
+    def on_enter_Basic(self):
         self.true_answer = random.randint(0, len(self.russ_words)-1)
         print(self.true_answer)
         self.first_step = True
-
         self.label_text2.config(text=self.chin_words[self.true_answer])
         self.text_input.delete(0, len(self.text_input.get()))
-
         self.button_check.config(bg=COLOR_GRAY)
         self.label_text_checker.config(text="Введите перевод по памяти.\n")
 
-    # Действие при нажатии на кнопку проверки (в письменном режиме)
-    def on_button_check(self):
+    # Callback-метод, вызываемый при входе в состояние Answer
+    def on_enter_Answer(self):
+        print("State = Answer")
         self.input_text_from_widget = self.text_input.get().split(',')
 
-        true_words = self.russ_words[self.true_answer]
+        self.true_words = self.russ_words[self.true_answer]
 
         for word in self.input_text_from_widget:
             #w = word.replace(' ','')
             w = word.strip()
             print(w)
-            if len(w)>0 and w in true_words:
+            if len(w)>0 and w in self.true_words:
                 if self.first_step:
-                    self.data_score_positive += 1
-                    self.first_step = False
-
-                    self.label_score_positive2.config(text=f'+{self.data_score_positive}')
-                    self.button_check.config(bg=COLOR_GREEN)
-
-                    self.label_text_checker.config(text=f'ВЕРНО!!!\n\"{true_words}\"')
+                    self.true()
                     break
         if self.first_step:
-            self.data_score_negative += 1
-            self.first_step = False
-            self.label_score_negative2.config(text=f'-{self.data_score_negative}')
-            self.button_check.config(bg=COLOR_RED)
-            self.label_text_checker.config(text=f'ОШИБКА, должно быть:\n\"{true_words}\"')
+            self.false()
+
+
+    # Callback-метод, вызываемый при выходе из состояния Answer
+    def on_exit_Answer(self):
+        print("Вы вышли из состояния Answer")
+
+    # Callback-метод, вызываемый при входе в состояние True_answer
+    def on_enter_True_answer(self):
+        print("State = True_answer")
+
+        self.data_score_positive += 1
+        self.first_step = False
+        self.label_score_positive2.config(text=f'+{self.data_score_positive}')
+        self.button_check.config(bg=COLOR_GREEN)
+        self.label_text_checker.config(text=f'ВЕРНО!!!\n\"{self.true_words}\"')
+
+    # Callback-метод, вызываемый при входе в состояние False_answer
+    def on_enter_False_answer(self):
+        print("State = False_answer")
+
+        self.data_score_negative += 1
+        self.first_step = False
+        self.label_score_negative2.config(text=f'-{self.data_score_negative}')
+        self.button_check.config(bg=COLOR_RED)
+        self.label_text_checker.config(text=f'ОШИБКА, должно быть:\n\"{self.true_words}\"')
+
+    # Действие кнопки Next на второй вкладке (режим письменный)
+    def on_button_next2(self):
+        self.next()
+
+    # Действие при нажатии на кнопку проверки (в письменном режиме)
+    def on_button_check(self):
+        self.check()
+
+    def space_event(self, event):
+        print(self.notebook.select())
+        if self.notebook.index(self.notebook.select()) == 1 and not self.first_step:
+                self.button_next2.invoke()
+
+    def enter_event(self, event):
+        if self.notebook.index(self.notebook.select()) == 1:
+            self.button_check.invoke()
+            #if self.first_step:
+                #self.button_check.invoke()
+            #else:
+                #self.button_next2.invoke()
+            print('ENTER')
 
 # END Class BrainMachine ######################################################################
 
@@ -301,16 +363,7 @@ def on_button_next():
 
 
 
-# Действие при нажатии на Space
-def space_event(event):
-    match notebook.index(notebook.select()):
-        case 0:
-            button_next1.invoke()
-        case 1:
-            if not first_step:
-                button_next2.invoke()
-        case 2:
-            pass
+
         
 # Действие нажатия на Enter
 def enter_event(event):
@@ -337,10 +390,7 @@ def num_event1(event):
         case 2:
             pass
 
-# Это не особо нужно и наверное я удалю это
-def on_tab_changed(event):
-    selected_tab = notebook.index(notebook.select())
-    print(f"Активная вкладка: {selected_tab}")
+
 
 
 def parse_dictonary(file_dictonary: str) -> [list[str], list[str]]:
@@ -467,9 +517,9 @@ frame_base3.pack(expand=1, fill='both')
 ############################################################################
 
 notebook.pack(expand=1, fill='both')
-notebook.bind("<<NotebookTabChanged>>", on_tab_changed)
 
-root.bind('<space>', space_event)
-root.bind('<Return>', enter_event)
+
+
+
 
 root.mainloop()
