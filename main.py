@@ -92,48 +92,47 @@ class BrainMachine(BaseStateMachine, object):
                               initial='Basic')
         
         
-        self.tab2 = ttk.Frame(self.notebook)
-        self.notebook.add(self.tab2, text=' Письменный ')
+        self.tab = ttk.Frame(self.notebook)
+        self.notebook.add(self.tab, text=' Письменный ')
 
-        self.frame_base2 = tk.Frame(self.tab2)
-        self.frame_base2.pack(expand=1, fill='both')
+        self.frame_base = tk.Frame(self.tab)
+        self.frame_base.pack(expand=1, fill='both')
 
-        self.label_text2 = tk.Label(self.frame_base2, text="[***]", font=font_big)
-        self.label_text2.pack(pady=10)
+        self.label_text = tk.Label(self.frame_base, text="[***]", font=font_big)
+        self.label_text.pack(pady=10)
 
-        self.label_score_positive2 = tk.Label(self.frame_base2, text=f'+{data_score_positive}', font=font_score)
-        self.label_score_positive2.place(x = 10, y = 50)
+        self.label_score_positive = tk.Label(self.frame_base, text=f'+{data_score_positive}', font=font_score)
+        self.label_score_positive.place(x = 10, y = 50)
 
-        self.label_score_negative2 = tk.Label(self.frame_base2, text=f' -{data_score_negative}', font=font_score)
-        self.label_score_negative2.place(x = 10, y = 100)
+        self.label_score_negative = tk.Label(self.frame_base, text=f' -{data_score_negative}', font=font_score)
+        self.label_score_negative.place(x = 10, y = 100)
 
-        self.text_input = tk.Entry(self.frame_base2, font=font_small, bg='#DDDDDD', width=200)
+        self.text_input = tk.Entry(self.frame_base, font=font_small, bg='#DDDDDD', width=200)
         self.text_input.pack(pady=10, padx=100)
 
-        self.button_check = tk.Button(self.frame_base2, text=f"Check", 
+        self.button_check = tk.Button(self.frame_base, text=f"Check", 
                                 command=lambda: self.on_button_check(), 
                                 font=font_small, 
                                 width=200, #height=50,
                                 bg='#DDDDDD')
         self.button_check.pack( pady=10, padx=50 )
 
-        self.label_text_checker = tk.Label(self.frame_base2, text="Введите перевод по памяти.\n", font=font_small)
+        self.label_text_checker = tk.Label(self.frame_base, text="Введите перевод по памяти.\n", font=font_small)
         self.label_text_checker.pack(pady=50)
 
-
-        self.button_next2 = tk.Button(self.tab2, text=f"Next", 
+        self.button_next = tk.Button(self.tab, text=f"Next", 
                         command=lambda: self.on_button_next2(), 
                         font=font_small, 
                         width=200, height=50,
                         bg='#DDDDDD')
-        self.button_next2.pack(side=tk.BOTTOM, anchor=tk.SE, pady=0)
+        self.button_next.pack(side=tk.BOTTOM, anchor=tk.SE, pady=0)
     
     # Callback-метод, вызываемый при входе в состояние Basic
     def on_enter_Basic(self):
         self.true_answer = random.randint(0, len(self.russ_words)-1)
         print(self.true_answer)
         self.first_step = True
-        self.label_text2.config(text=self.chin_words[self.true_answer])
+        self.label_text.config(text=self.chin_words[self.true_answer])
         self.text_input.delete(0, len(self.text_input.get()))
         self.button_check.config(bg=COLOR_GRAY)
         self.label_text_checker.config(text="Введите перевод по памяти.\n")
@@ -167,7 +166,7 @@ class BrainMachine(BaseStateMachine, object):
 
         self.data_score_positive += 1
         self.first_step = False
-        self.label_score_positive2.config(text=f'+{self.data_score_positive}')
+        self.label_score_positive.config(text=f'+{self.data_score_positive}')
         self.button_check.config(bg=COLOR_GREEN)
         self.label_text_checker.config(text=f'ВЕРНО!!!\n\"{self.true_words}\"')
 
@@ -177,7 +176,7 @@ class BrainMachine(BaseStateMachine, object):
 
         self.data_score_negative += 1
         self.first_step = False
-        self.label_score_negative2.config(text=f'-{self.data_score_negative}')
+        self.label_score_negative.config(text=f'-{self.data_score_negative}')
         self.button_check.config(bg=COLOR_RED)
         self.label_text_checker.config(text=f'ОШИБКА, должно быть:\n\"{self.true_words}\"')
 
@@ -192,15 +191,11 @@ class BrainMachine(BaseStateMachine, object):
     def space_event(self, event):
         print(self.notebook.select())
         if self.notebook.index(self.notebook.select()) == 1 and not self.first_step:
-                self.button_next2.invoke()
+                self.button_next.invoke()
 
     def enter_event(self, event):
         if self.notebook.index(self.notebook.select()) == 1:
             self.button_check.invoke()
-            #if self.first_step:
-                #self.button_check.invoke()
-            #else:
-                #self.button_next2.invoke()
             print('ENTER')
 
 # END Class BrainMachine ######################################################################
