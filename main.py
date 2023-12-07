@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import ttk, filedialog
+from transitions import Machine
 import random
 
-VERSION = '0.2.3'
+VERSION = '0.3.0'
 NAME_PROGRAM = 'Chinese Trainer'
 
 COLOR_GREEN = "#00AA55"
@@ -24,6 +25,137 @@ first_step: bool = True
 # Массивы содержащие распарсенный словарь
 russ_words: list[str] = []
 chin_words: list[str] = []
+
+
+# Class BrainMachine ######################################################################
+class BrainMachine(object):
+
+    true_answer = 0
+    first_step = 0
+
+    data_score_positive = 0
+    data_score_negative = 0
+
+    def __init__(self, window, notebook, russ_dict: list[str], chin_dict: list[str]):
+        
+        states_brain_machine = ['Basic', 'Answer', 'True_answer', 'False_answer']
+        transitions_brain_machine = [
+            {'trigger': 'check', 'source': 'Basic', 'dest': 'Answer'},
+            {'trigger': 'true', 'source': 'Answer', 'dest': 'True_answer'},
+            {'trigger': 'false', 'source': 'Answer', 'dest': 'False_answer'},
+            {'trigger': 'check', 'source': ['True_answer', 'False_answer'], 'dest': 'Basic'},
+            {'trigger': 'next', 'source': ['True_answer', 'False_answer'], 'dest': 'Basic'},
+            {'trigger': 'next', 'source': 'Basic', 'dest': 'Basic'}
+        ]
+        self.machine = Machine(model=self, 
+                              states=states_brain_machine, 
+                              transitions=transitions_brain_machine, 
+                              initial='Basic')
+        
+        self.window = window
+        self.notebook = notebook
+        self.russ_words = russ_dict
+        self.chin_words = chin_dict
+
+
+        self.tab2 = ttk.Frame(self.notebook)
+        self.notebook.add(self.tab2, text=' Письменный ')
+
+        self.frame_base2 = tk.Frame(self.tab2)
+        self.frame_base2.pack(expand=1, fill='both')
+
+        self.label_text2 = tk.Label(self.frame_base2, text="[***]", font=font_big)
+        self.label_text2.pack(pady=10)
+
+        self.label_score_positive2 = tk.Label(self.frame_base2, text=f'+{data_score_positive}', font=font_score)
+        self.label_score_positive2.place(x = 10, y = 50)
+
+        self.label_score_negative2 = tk.Label(self.frame_base2, text=f' -{data_score_negative}', font=font_score)
+        self.label_score_negative2.place(x = 10, y = 100)
+
+        self.text_input = tk.Entry(self.frame_base2, font=font_small, bg='#DDDDDD', width=200)
+        self.text_input.pack(pady=10, padx=100)
+
+        self.button_check = tk.Button(self.frame_base2, text=f"Check", 
+                                command=lambda: on_button_check(), 
+                                font=font_small, 
+                                width=200, #height=50,
+                                bg='#DDDDDD')
+        self.button_check.pack( pady=10, padx=50 )
+
+        self.label_text_checker = tk.Label(self.frame_base2, text="Введите перевод по памяти.\n", font=font_small)
+        self.label_text_checker.pack(pady=50)
+
+
+        self.button_next2 = tk.Button(self.tab2, text=f"Next", 
+                        command=lambda: self.on_button_next2(), 
+                        font=font_small, 
+                        width=200, height=50,
+                        bg='#DDDDDD')
+        self.button_next2.pack(side=tk.BOTTOM, anchor=tk.SE, pady=0)
+    
+    # Callback-метод, вызываемый при входе в состояние Состояние1.1
+    def on_enter_Answer(self):
+        print("Вы вошли в состояние Answer")
+
+    # Callback-метод, вызываемый при выходе из состояния Состояние1.1
+    def on_exit_Answer(self):
+        print("Вы вышли из состояния Answer")
+
+    # Действие кнопки Next на второй вкладке (режим письменный)
+    def on_button_next2(self):
+        self.true_answer = random.randint(0, len(self.russ_words)-1)
+        print(self.true_answer)
+        self.first_step = True
+
+        self.label_text2.config(text=self.chin_words[self.true_answer])
+        self.text_input.delete(0, len(self.text_input.get()))
+
+        self.button_check.config(bg=COLOR_GRAY)
+        self.label_text_checker.config(text="Введите перевод по памяти.\n")
+
+    # Действие при нажатии на кнопку проверки (в письменном режиме)
+    def on_button_check(self):
+        self.input_text_from_widget = self.text_input.get().split(',')
+
+        true_words = self.russ_words[self.true_answer]
+
+        for word in self.input_text_from_widget:
+            #w = word.replace(' ','')
+            w = word.strip()
+            print(w)
+            if len(w)>0 and w in true_words:
+                if self.first_step:
+                    self.data_score_positive += 1
+                    self.first_step = False
+
+                    self.label_score_positive2.config(text=f'+{self.data_score_positive}')
+                    self.button_check.config(bg=COLOR_GREEN)
+
+                    self.label_text_checker.config(text=f'ВЕРНО!!!\n\"{true_words}\"')
+                    break
+        if self.first_step:
+            self.data_score_negative += 1
+            self.first_step = False
+            self.label_score_negative2.config(text=f'-{self.data_score_negative}')
+            self.button_check.config(bg=COLOR_RED)
+            self.label_text_checker.config(text=f'ОШИБКА, должно быть:\n\"{true_words}\"')
+
+# END Class BrainMachine ######################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Процедура открытия окнв с информацией о программе
 def on_about_program():
@@ -138,6 +270,8 @@ def on_button_next():
 
     first_step = True
 
+    
+
     indexes = generate_random_indexes(max=len(russ_words)-1)
     print(indexes)
     
@@ -152,54 +286,20 @@ def on_button_next():
         ind = indexes[i]
         button.config(text=russ_words[ind], bg=COLOR_GRAY)
         i += 1
-
-# Действие кнопки Next на второй вкладке (режим письменный)
-def on_button_next2():
-    global true_answer
-    global first_step
-
-    true_answer = random.randint(0, len(russ_words)-1)
-    print(true_answer)
-    first_step = True
-
-    label_text2.config(text=chin_words[true_answer])
-    text_input.delete(0, len(text_input.get()))
-
-    button_check.config(bg=COLOR_GRAY)
-    label_text_checker.config(text="Введите перевод по памяти.\n")
-
-# Действие при нажатии на кнопку проверки (в письменном режиме)
-def on_button_check():
-    global data_score_positive
-    global data_score_negative
-    global true_answer
-    global first_step
-
-    input_text_from_widget = text_input.get().split(',')
     
+    bm.set_label(label_text1)
 
-    true_words = russ_words[true_answer]
+    print(bm.state)
+    bm.check()
+    print(bm.state)
+    bm.true()
+    print(bm.state)
+    bm.check()
+    print(bm.state)
 
-    for word in input_text_from_widget:
-        #w = word.replace(' ','')
-        w = word.strip()
-        print(w)
-        if len(w)>0 and w in true_words:
-            if first_step:
-                data_score_positive += 1
-                first_step = False
 
-                label_score_positive2.config(text=f'+{data_score_positive}')
-                button_check.config(bg=COLOR_GREEN)
 
-                label_text_checker.config(text=f'ВЕРНО!!!\n\"{true_words}\"')
-                break
-    if first_step:
-        data_score_negative += 1
-        first_step = False
-        label_score_negative2.config(text=f'-{data_score_negative}')
-        button_check.config(bg=COLOR_RED)
-        label_text_checker.config(text=f'ОШИБКА, должно быть:\n\"{true_words}\"')
+
 
 # Действие при нажатии на Space
 def space_event(event):
@@ -350,41 +450,9 @@ button_next1.pack(side=tk.RIGHT, anchor=tk.SE)
 ############################################################################
 # Вкладка 2
 
-tab2 = ttk.Frame(notebook)
-notebook.add(tab2, text=' Письменный ')
 
-frame_base2 = tk.Frame(tab2)
-frame_base2.pack(expand=1, fill='both')
+bm = BrainMachine(window=root, notebook=notebook, russ_dict=russ_words, chin_dict=chin_words)
 
-label_text2 = tk.Label(frame_base2, text="[***]", font=font_big)
-label_text2.pack(pady=10)
-
-label_score_positive2 = tk.Label(frame_base2, text=f'+{data_score_positive}', font=font_score)
-label_score_positive2.place(x = 10, y = 50)
-
-label_score_negative2 = tk.Label(frame_base2, text=f' -{data_score_negative}', font=font_score)
-label_score_negative2.place(x = 10, y = 100)
-
-text_input = tk.Entry(frame_base2, font=font_small, bg='#DDDDDD', width=200)
-text_input.pack(pady=10, padx=100)
-
-button_check = tk.Button(frame_base2, text=f"Check", 
-                        command=lambda: on_button_check(), 
-                        font=font_small, 
-                        width=200, #height=50,
-                        bg='#DDDDDD')
-button_check.pack( pady=10, padx=50 )
-
-label_text_checker = tk.Label(frame_base2, text="Введите перевод по памяти.\n", font=font_small)
-label_text_checker.pack(pady=50)
-
-
-button_next2 = tk.Button(tab2, text=f"Next", 
-                        command=lambda: on_button_next2(), 
-                        font=font_small, 
-                        width=200, height=50,
-                        bg='#DDDDDD')
-button_next2.pack(side=tk.BOTTOM, anchor=tk.SE, pady=0)
 
 
 ############################################################################
