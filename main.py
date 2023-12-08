@@ -3,7 +3,7 @@ from tkinter import ttk, filedialog, messagebox
 from transitions import Machine
 import random
 
-VERSION = '0.3.1'
+VERSION = '0.3.2'
 NAME_PROGRAM = 'Chinese Trainer'
 
 COLOR_GREEN = "#00AA55"
@@ -320,7 +320,7 @@ class WindowDiapasone(object):
 
         self.label_max = tk.Label(self.frame_base, text="Max", font=font_small)
         self.label_max.pack(pady=10)
-        self.spin_value_max = tk.StringVar(value='4')
+        self.spin_value_max = tk.StringVar(value=f'{len(russ_words)-1}')
         self.spinbox_max = ttk.Spinbox(self.frame_base, 
                                        from_=0, to=len(russ_words)-1, 
                                        textvariable=self.spin_value_max)
@@ -473,6 +473,7 @@ def parse_dictonary(file_dictonary: str) -> [list[str], list[str]]:
 
 root = tk.Tk()
 root.title(f'{NAME_PROGRAM} {VERSION}')
+root.iconbitmap('icon.ico')
 
 font_big = ("Arial", 100)  
 font_small = ("Arial", 18)  
@@ -485,7 +486,7 @@ style.theme_use('default')
 style.configure('TNotebook.Tab', background="White")
 style.map("TNotebook", background= [("selected", "White")])
 
-file_content = read_file("Words.txt")
+file_content = read_file('chinese_dict.txt') #"Words.txt"
 russ_words, chin_words = parse_dictonary(file_content)
 
 # Создаем меню  ############################################################
@@ -542,4 +543,6 @@ frame_base3.pack(expand=1, fill='both')
 
 notebook.pack(expand=1, fill='both')
 root.bind('<space>', space_event)
+
+on_diapason_words()
 root.mainloop()
