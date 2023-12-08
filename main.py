@@ -476,6 +476,8 @@ root = tk.Tk()
 root.title(f'{NAME_PROGRAM} {VERSION}')
 root.iconbitmap(default='icon.ico')
 
+#root.attributes("-alpha", 0.5)
+
 font_big = ("Arial", 100)  
 font_small = ("Arial", 18)  
 font_score = ("Arial", 30)  
