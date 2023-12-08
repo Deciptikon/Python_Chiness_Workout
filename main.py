@@ -112,6 +112,7 @@ class TestMachine(BaseStateMachine, object):
                                 width=200, height=50,
                                 bg='#DDDDDD')
         self.button_next.pack(side=tk.RIGHT, anchor=tk.SE)
+        self.next()
 
     def on_enter_Basic(self):
         print("State = Basic")
@@ -234,6 +235,7 @@ class BrainMachine(BaseStateMachine, object):
                         width=200, height=50,
                         bg='#DDDDDD')
         self.button_next.pack(side=tk.BOTTOM, anchor=tk.SE, pady=0)
+        self.next()
     
     # Callback-метод, вызываемый при входе в состояние Basic
     def on_enter_Basic(self):
