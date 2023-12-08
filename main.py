@@ -3,6 +3,13 @@ from tkinter import ttk, filedialog
 from transitions import Machine
 import random
 
+# В этой прогармме есть баг.
+# Если перйти в режим "Письменный" и ответить на него, 
+# воспользовавшись привязкой клавиш, вернувшись в режим
+# "Тестовый" нажатие на пробел будет менять иероглиф
+# (как и должно быть) и при этом автоматически отвечать
+# на первый вопрос. Я не заню почему это так, потом разберусь.
+
 VERSION = '0.3.1'
 NAME_PROGRAM = 'Chinese Trainer'
 
@@ -168,6 +175,7 @@ class TestMachine(BaseStateMachine, object):
 
     # Действие 4-х кнопок на первой вкладке (режим Тестовый)
     def on_button_click(self, button_number):
+        print('---> click -->')
         self.num_button = button_number
         self.check()
 
