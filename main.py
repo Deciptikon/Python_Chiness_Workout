@@ -471,9 +471,10 @@ def parse_dictonary(file_dictonary: str) -> [list[str], list[str]]:
 ############  Тело GUI  ########################################################
 ################################################################################
 
+
 root = tk.Tk()
 root.title(f'{NAME_PROGRAM} {VERSION}')
-root.iconbitmap('icon.ico')
+root.iconbitmap(default='icon.ico')
 
 font_big = ("Arial", 100)  
 font_small = ("Arial", 18)  
