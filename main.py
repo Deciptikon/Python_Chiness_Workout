@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import ttk, filedialog, messagebox
 from transitions import Machine
 import random
 
@@ -300,6 +300,66 @@ class BrainMachine(BaseTab, object):
 
 # END Class BrainMachine ######################################################################
 
+class WindowDiapasone(object):
+    def __init__(self, root) -> None:
+        self.root = root
+        self.modal_window = tk.Toplevel(self.root)
+        self.modal_window.title("Настройка диапазона")
+        self.modal_window.geometry("300x300+650+200")
+
+        self.frame_base = tk.Frame(self.modal_window)
+        self.frame_base.pack(expand=1, fill='both')
+
+        self.label_min = tk.Label(self.frame_base, text="Min", font=font_small)
+        self.label_min.pack(pady=10)
+        self.spin_value_min = tk.StringVar(value='0')
+        self.spinbox_min = ttk.Spinbox(self.frame_base, 
+                                       from_=0, to=len(russ_words)-1, 
+                                       textvariable=self.spin_value_min)
+        self.spinbox_min.pack()
+
+        self.label_max = tk.Label(self.frame_base, text="Max", font=font_small)
+        self.label_max.pack(pady=10)
+        self.spin_value_max = tk.StringVar(value='4')
+        self.spinbox_max = ttk.Spinbox(self.frame_base, 
+                                       from_=0, to=len(russ_words)-1, 
+                                       textvariable=self.spin_value_max)
+        self.spinbox_max.pack()
+
+        self.button_ok = ttk.Button(self.frame_base, text="Ok", 
+                           command=self.on_button_ok_diapason)
+        self.button_ok.pack(side="left", padx=10, expand=1)
+
+        self.button_cancel = ttk.Button(self.frame_base, text="Отмена", 
+                               command=self.modal_window.destroy)
+        self.button_cancel.pack(side="left", padx=10, expand=1)
+
+        # Устанавливаем родительское окно для модального окна
+        self.modal_window.transient(self.root)
+        # Ожидаем закрытия модального окна перед возвращением к основному окну
+        self.modal_window.wait_window(self.modal_window)
+
+
+    def on_button_ok_diapason(self):
+
+        min_value = int(self.spinbox_min.get())
+        max_value = int(self.spinbox_max.get())
+        raz: int = 4
+        print(f'Minimum = {self.spinbox_min.get()}')
+        print(f'Maximum = {self.spinbox_max.get()}')
+        if max_value - min_value < raz:
+            messagebox.showinfo("Внимание", f"Максимальное значение должно превышать минимальное более чем на {raz} единиц.")
+        else:
+            russ_cuting = russ_words[min_value:max_value+1]
+            chin_cuting = chin_words[min_value:max_value+1]
+            t1.set_dicts(russ_dict=russ_cuting, chin_dict=chin_cuting)
+            t2.set_dicts(russ_dict=russ_cuting, chin_dict=chin_cuting)
+            messagebox.showinfo("Успешно", f"Диапазон от {min_value} до {max_value} успешно установлен")
+            self.modal_window.destroy()
+
+
+
+
 # Процедура открытия окнв с информацией о программе
 def on_about_program():
     print('About ....')
@@ -321,17 +381,10 @@ def on_open_file():
     t1.set_dicts(russ_dict=russ_words, chin_dict=chin_words)
     t2.set_dicts(russ_dict=russ_words, chin_dict=chin_words)
 
+
+
 def on_diapason_words():
-    modal_window = tk.Toplevel(root)
-    modal_window.title("Настройка диапазона")
-    modal_window.geometry("500x600+650+200")
-
-
-
-    # Устанавливаем родительское окно для модального окна
-    modal_window.transient(root)
-    # Ожидаем закрытия модального окна перед возвращением к основному окну
-    modal_window.wait_window(modal_window)
+    diap_window = WindowDiapasone(root=root)
 
 
 # Открывает модальное окно с информацией о программе
