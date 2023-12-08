@@ -26,7 +26,7 @@ first_step: bool = True
 russ_words: list[str] = []
 chin_words: list[str] = []
 
-class BaseStateMachine:
+class BaseTab:
     def __init__(self, window, notebook, russ_dict: list[str], chin_dict: list[str]):
         self.window = window
         self.notebook = notebook
@@ -36,6 +36,9 @@ class BaseStateMachine:
         self.window.bind('<Return>', self.enter_event)
         self.notebook.bind("<<NotebookTabChanged>>", self.on_tab_changed)
 
+    def set_dicts(self, russ_dict: list[str], chin_dict: list[str]):
+        self.russ_words = russ_dict
+        self.chin_words = chin_dict
 
     # Действие нажатия на Enter
     def enter_event(self, event):
@@ -48,7 +51,7 @@ class BaseStateMachine:
         self.window.focus_set()
 
 # Class TestMachine ######################################################################
-class TestMachine(BaseStateMachine, object):
+class TestMachine(BaseTab, object):
     true_answer: int = 0
     first_step: bool = True
     data_score_positive: int = 0
@@ -174,7 +177,7 @@ class TestMachine(BaseStateMachine, object):
 # END Class TestMachine ######################################################################
 
 # Class BrainMachine ######################################################################
-class BrainMachine(BaseStateMachine, object):
+class BrainMachine(BaseTab, object):
     true_answer: int = 0
     first_step: bool = True
     data_score_positive: int = 0
@@ -315,11 +318,27 @@ def on_open_file():
     file_content = read_file(file_path)
     russ_words, chin_words = parse_dictonary(file_content)
 
+    t1.set_dicts(russ_dict=russ_words, chin_dict=chin_words)
+    t2.set_dicts(russ_dict=russ_words, chin_dict=chin_words)
+
+def on_diapason_words():
+    modal_window = tk.Toplevel(root)
+    modal_window.title("Настройка диапазона")
+    modal_window.geometry("500x600+650+200")
+
+
+
+    # Устанавливаем родительское окно для модального окна
+    modal_window.transient(root)
+    # Ожидаем закрытия модального окна перед возвращением к основному окну
+    modal_window.wait_window(modal_window)
+
+
 # Открывает модальное окно с информацией о программе
 def open_about_window():
     modal_window = tk.Toplevel(root)
     modal_window.title("О программе")
-    modal_window.geometry("500x600+650+200")
+    modal_window.geometry("400x350+650+200")
     label = tk.Label(modal_window, 
                      text=F"""Это простой тренер китайского языка.
 
@@ -328,7 +347,7 @@ def open_about_window():
  - на сонове памяти;                                      
  - на основе адаптированного подбора слов;
  
- Текущая версия программы {VERSION}.
+ Текущая версия программы {VERSION}
  
  Программа абсолютно бесплатна ;-)
 
@@ -429,6 +448,12 @@ file_menu.add_command(label="Выход", command=root.destroy)
 # Добавляем подменю "Файл" к основному меню 
 menu_bar.add_cascade(label="Файл", menu=file_menu)
 
+# Создаем подменю "Правка" #################################################
+edit_menu = tk.Menu(menu_bar, tearoff=0)
+edit_menu.add_command(label="Диапазон", command=on_diapason_words)
+
+# Добавляем подменю "Правка" к основному меню
+menu_bar.add_cascade(label="Правка", menu=edit_menu)
 
 # Создаем подменю "Помощь" #################################################
 help_menu = tk.Menu(menu_bar, tearoff=0)
