@@ -41,7 +41,7 @@ class BaseStateMachine:
     def enter_event(self, event):
         pass
 
-    # Это не особо нужно и наверное я удалю это
+    # Действие при смене вкладки
     def on_tab_changed(self, event):
         self.selected_tab = self.notebook.index(self.notebook.select())
         print(f"Активная вкладка: {self.selected_tab}")
