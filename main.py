@@ -3,13 +3,6 @@ from tkinter import ttk, filedialog
 from transitions import Machine
 import random
 
-# В этой прогармме есть баг.
-# Если перйти в режим "Письменный" и ответить на него, 
-# воспользовавшись привязкой клавиш, вернувшись в режим
-# "Тестовый" нажатие на пробел будет менять иероглиф
-# (как и должно быть) и при этом автоматически отвечать
-# на первый вопрос. Я не заню почему это так, потом разберусь.
-
 VERSION = '0.3.1'
 NAME_PROGRAM = 'Chinese Trainer'
 
@@ -43,6 +36,7 @@ class BaseStateMachine:
         self.window.bind('<Return>', self.enter_event)
         self.notebook.bind("<<NotebookTabChanged>>", self.on_tab_changed)
 
+
     # Действие нажатия на Enter
     def enter_event(self, event):
         pass
@@ -51,6 +45,7 @@ class BaseStateMachine:
     def on_tab_changed(self, event):
         self.selected_tab = self.notebook.index(self.notebook.select())
         print(f"Активная вкладка: {self.selected_tab}")
+        self.window.focus_set()
 
 # Class TestMachine ######################################################################
 class TestMachine(BaseStateMachine, object):
@@ -95,15 +90,14 @@ class TestMachine(BaseStateMachine, object):
         self.frame.pack(side=tk.TOP, pady=10)
 
         self.buttons = []
-        for i in range(0, 4):
+        for i in range(1, 5):
             self.button = tk.Button(self.frame, text=f"****", 
-                                command=lambda num=i: self.on_button_click(num), 
+                                command=lambda num=i-1: self.on_button_click(num), 
                                 font=font_small, 
                                 padx=10,
                                 width=50)
-            #button.pack(side=tk.LEFT, padx=10)
-            self.button.grid(row=i, column=0, pady=10, padx=10 )
-            self.window.bind(str(i+1), self.num_event)
+            self.button.grid(row=i-1, column=0, pady=10, padx=10 )
+            self.window.bind(str(i), self.num_event)
             self.buttons.append(self.button)
 
         self.button_next = tk.Button(self.tab, text=f"Next", 
@@ -113,6 +107,7 @@ class TestMachine(BaseStateMachine, object):
                                 bg='#DDDDDD')
         self.button_next.pack(side=tk.RIGHT, anchor=tk.SE)
         self.next()
+
 
     def on_enter_Basic(self):
         print("State = Basic")
@@ -160,7 +155,7 @@ class TestMachine(BaseStateMachine, object):
 
     # Действие 4-х кнопок на первой вкладке (режим Тестовый)
     def on_button_click(self, button_number):
-        print('---> click -->')
+        print(f'---> click --> {button_number=}')
         self.num_button = button_number
         self.check()
 
