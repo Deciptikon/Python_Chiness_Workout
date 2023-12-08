@@ -39,14 +39,9 @@ class BaseStateMachine:
         self.notebook = notebook
         self.russ_words = russ_dict
         self.chin_words = chin_dict
-
         self.selected_tab = 0
-
-        
         self.window.bind('<Return>', self.enter_event)
         self.notebook.bind("<<NotebookTabChanged>>", self.on_tab_changed)
-    
-    
 
     # Действие нажатия на Enter
     def enter_event(self, event):
@@ -59,13 +54,10 @@ class BaseStateMachine:
 
 # Class TestMachine ######################################################################
 class TestMachine(BaseStateMachine, object):
-
     true_answer: int = 0
     first_step: bool = True
-
     data_score_positive: int = 0
     data_score_negative: int = 0
-
     num_button = None
 
     def __init__(self, window, notebook, russ_dict: list[str], chin_dict: list[str]):
@@ -89,7 +81,6 @@ class TestMachine(BaseStateMachine, object):
 
         self.frame_base = tk.Frame(self.tab)
         self.frame_base.pack(expand=1, fill='both')
-
 
         self.label_text = tk.Label(self.frame_base, text="[***]", font=font_big)
         self.label_text.pack(pady=10)
@@ -115,7 +106,6 @@ class TestMachine(BaseStateMachine, object):
             self.window.bind(str(i+1), self.num_event)
             self.buttons.append(self.button)
 
-
         self.button_next = tk.Button(self.tab, text=f"Next", 
                                 command=lambda: self.on_button_next(), 
                                 font=font_small, 
@@ -125,19 +115,14 @@ class TestMachine(BaseStateMachine, object):
 
     def on_enter_Basic(self):
         print("State = Basic")
-
         self.num_button = None
         self.first_step = True
-
         indexes = generate_random_indexes(max=len(self.russ_words)-1)
         print(indexes)
-    
         self.true_answer = random.randint(0, 3)
         print(self.true_answer)
-
         ind = indexes[self.true_answer]
         self.label_text.config(text=self.chin_words[ind])
-
         i: int = 0
         for button in self.buttons:
             ind = indexes[i]
@@ -172,7 +157,6 @@ class TestMachine(BaseStateMachine, object):
             self.label_score_negative.config(text=f' -{self.data_score_negative}')
         self.first_step = False
 
-
     # Действие 4-х кнопок на первой вкладке (режим Тестовый)
     def on_button_click(self, button_number):
         print('---> click -->')
@@ -191,21 +175,17 @@ class TestMachine(BaseStateMachine, object):
             if i in range(0, 4):
                 self.buttons[i].invoke()
 
-
-
+# END Class TestMachine ######################################################################
 
 # Class BrainMachine ######################################################################
 class BrainMachine(BaseStateMachine, object):
-
     true_answer: int = 0
     first_step: bool = True
-
     data_score_positive: int = 0
     data_score_negative: int = 0
 
     def __init__(self, window, notebook, russ_dict: list[str], chin_dict: list[str]):
         super().__init__( window, notebook, russ_dict, chin_dict)
-        
         states_brain_machine = ['Basic', 'Answer', 'True_answer', 'False_answer']
         transitions_brain_machine = [
             {'trigger': 'check', 'source': 'Basic', 'dest': 'Answer'},
@@ -219,7 +199,6 @@ class BrainMachine(BaseStateMachine, object):
                               states=states_brain_machine, 
                               transitions=transitions_brain_machine, 
                               initial='Basic')
-        
         
         self.tab = ttk.Frame(self.notebook)
         self.notebook.add(self.tab, text=' Письменный ')
@@ -270,9 +249,7 @@ class BrainMachine(BaseStateMachine, object):
     def on_enter_Answer(self):
         print("State = Answer")
         self.input_text_from_widget = self.text_input.get().split(',')
-
         self.true_words = self.russ_words[self.true_answer]
-
         for word in self.input_text_from_widget:
             #w = word.replace(' ','')
             w = word.strip()
@@ -284,7 +261,6 @@ class BrainMachine(BaseStateMachine, object):
         if self.first_step:
             self.false()
 
-
     # Callback-метод, вызываемый при выходе из состояния Answer
     # Этот код для примера, в программе он не нужен. Но из-за того что я могу забыть о нём,
     # я оставил это здесь
@@ -294,7 +270,6 @@ class BrainMachine(BaseStateMachine, object):
     # Callback-метод, вызываемый при входе в состояние True_answer
     def on_enter_True_answer(self):
         print("State = True_answer")
-
         self.data_score_positive += 1
         self.first_step = False
         self.label_score_positive.config(text=f'+{self.data_score_positive}')
@@ -304,7 +279,6 @@ class BrainMachine(BaseStateMachine, object):
     # Callback-метод, вызываемый при входе в состояние False_answer
     def on_enter_False_answer(self):
         print("State = False_answer")
-
         self.data_score_negative += 1
         self.first_step = False
         self.label_score_negative.config(text=f'-{self.data_score_negative}')
@@ -325,20 +299,6 @@ class BrainMachine(BaseStateMachine, object):
             print('ENTER')
 
 # END Class BrainMachine ######################################################################
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # Процедура открытия окнв с информацией о программе
 def on_about_program():
@@ -361,10 +321,8 @@ def on_open_file():
 # Открывает модальное окно с информацией о программе
 def open_about_window():
     modal_window = tk.Toplevel(root)
-
     modal_window.title("О программе")
     modal_window.geometry("500x600+650+200")
-
     label = tk.Label(modal_window, 
                      text=F"""Это простой тренер китайского языка.
 
@@ -385,10 +343,8 @@ def open_about_window():
  """)
     
     label.pack(padx=20, pady=20)
-
     # Устанавливаем родительское окно для модального окна
     modal_window.transient(root)
-
     # Ожидаем закрытия модального окна перед возвращением к основному окну
     modal_window.wait_window(modal_window)
 
@@ -419,10 +375,6 @@ def read_file(file_path):
     except Exception as e:
         return f"Ошибка чтения файла: {e}"
 
-
-
-
-
 # Действие при нажатии на Space
 def space_event(event):
     print('SPACE -->')
@@ -435,12 +387,6 @@ def space_event(event):
                 t2.on_button_next()
         case 2:
             pass
-
-
-
-
-
-
 
 def parse_dictonary(file_dictonary: str) -> [list[str], list[str]]:
     russ: list[str] = []
@@ -455,7 +401,6 @@ def parse_dictonary(file_dictonary: str) -> [list[str], list[str]]:
 ################################################################################
 ############  Тело GUI  ########################################################
 ################################################################################
-
 
 root = tk.Tk()
 root.title(f'{NAME_PROGRAM} {VERSION}')
@@ -498,24 +443,16 @@ menu_bar.add_cascade(label="Помощь", menu=help_menu)
 # Устанавливаем основное меню для главного окна
 root.config(menu=menu_bar)
 
-
 # Создаем виджет вкладок ###################################################
 notebook = ttk.Notebook(root)
 
 ############################################################################
 # Вкладка 1
-
 t1 = TestMachine(window=root, notebook=notebook, russ_dict=russ_words, chin_dict=chin_words)
-
-
 
 ############################################################################
 # Вкладка 2
-
-
 t2 = BrainMachine(window=root, notebook=notebook, russ_dict=russ_words, chin_dict=chin_words)
-
-
 
 ############################################################################
 # Вкладка 3
@@ -529,7 +466,5 @@ frame_base3.pack(expand=1, fill='both')
 ############################################################################
 
 notebook.pack(expand=1, fill='both')
-
 root.bind('<space>', space_event)
-
 root.mainloop()
