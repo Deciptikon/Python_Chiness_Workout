@@ -65,6 +65,94 @@ class TestMachine(BaseStateMachine, object):
         super().__init__( window, notebook, russ_dict, chin_dict)
 
 
+        self.tab = ttk.Frame(self.notebook)
+        self.notebook.add(self.tab, text=' Тестовый ')
+
+        self.frame_base = tk.Frame(self.tab)
+        self.frame_base.pack(expand=1, fill='both')
+
+
+        self.label_text = tk.Label(self.frame_base, text="[***]", font=font_big)
+        self.label_text.pack(pady=10)
+
+        self.label_score_positive = tk.Label(self.frame_base, text=f'+{self.data_score_positive}', font=font_score)
+        self.label_score_positive.place(x = 10, y = 50)
+
+        self.label_score_negative = tk.Label(self.frame_base, text=f' -{self.data_score_negative}', font=font_score)
+        self.label_score_negative.place(x = 10, y = 100)
+
+        self.frame = tk.Frame(self.frame_base)
+        self.frame.pack(side=tk.TOP, pady=10)
+
+        self.buttons = []
+        for i in range(0, 4):
+            self.button = tk.Button(self.frame, text=f"****", 
+                                command=lambda num=i: self.on_button_click(num), 
+                                font=font_small, 
+                                padx=10,
+                                width=50)
+            #button.pack(side=tk.LEFT, padx=10)
+            self.button.grid(row=i, column=0, pady=10, padx=10 )
+            self.window.bind(str(i+1), self.num_event)
+            self.buttons.append(self.button)
+
+
+        self.button_next = tk.Button(self.tab, text=f"Next", 
+                                command=lambda: self.on_button_next(), 
+                                font=font_small, 
+                                width=200, height=50,
+                                bg='#DDDDDD')
+        self.button_next.pack(side=tk.RIGHT, anchor=tk.SE)
+
+    # Действие 4-х кнопок на первой вкладке (режим Тестовый)
+    def on_button_click(self, button_number):
+        if button_number == self.true_answer:
+            bt = self.buttons[button_number]
+            bt.config(bg=COLOR_GREEN)
+            if self.first_step:
+                self.data_score_positive += 1
+                self.label_score_positive.config(text=f'+{self.data_score_positive}')
+        else:
+            bt = self.buttons[button_number]
+            bt.config(bg=COLOR_RED)
+            if self.first_step:
+                self.data_score_negative += 1
+                self.label_score_negative.config(text=f' -{self.data_score_negative}')
+        self.first_step = False
+
+    # Действие на первой вкладке (режим Тестирование)
+    def on_button_next(self):
+        self.first_step = True
+        indexes = generate_random_indexes(max=len(self.russ_words)-1)
+        print(indexes)
+    
+        self.true_answer = random.randint(0, 3)
+        print(self.true_answer)
+
+        ind = indexes[self.true_answer]
+        self.label_text.config(text=self.chin_words[ind])
+
+        i: int = 0
+        for button in self.buttons:
+            ind = indexes[i]
+            button.config(text=self.russ_words[ind], bg=COLOR_GRAY)
+            i += 1
+
+    # действия при нажатии на цифровые клавиши
+    def num_event(self, event):
+        if self.notebook.index(self.notebook.select()) == 0:
+            i = int(event.keysym) - 1
+            self.buttons[i].invoke()
+
+    def space_event(self, event):
+        print('button_next.invoke()')
+        if self.notebook.index(self.notebook.select()) == 0:
+                print('button_next.invoke()')
+                self.button_next.invoke()
+
+
+
+
 # Class BrainMachine ######################################################################
 class BrainMachine(BaseStateMachine, object):
 
@@ -121,7 +209,7 @@ class BrainMachine(BaseStateMachine, object):
         self.label_text_checker.pack(pady=50)
 
         self.button_next = tk.Button(self.tab, text=f"Next", 
-                        command=lambda: self.on_button_next2(), 
+                        command=lambda: self.on_button_next(), 
                         font=font_small, 
                         width=200, height=50,
                         bg='#DDDDDD')
@@ -181,7 +269,7 @@ class BrainMachine(BaseStateMachine, object):
         self.label_text_checker.config(text=f'ОШИБКА, должно быть:\n\"{self.true_words}\"')
 
     # Действие кнопки Next на второй вкладке (режим письменный)
-    def on_button_next2(self):
+    def on_button_next(self):
         self.next()
 
     # Действие при нажатии на кнопку проверки (в письменном режиме)
@@ -189,7 +277,7 @@ class BrainMachine(BaseStateMachine, object):
         self.check()
 
     def space_event(self, event):
-        print(self.notebook.select())
+        print(self.notebook.index(self.notebook.select()) )
         if self.notebook.index(self.notebook.select()) == 1 and not self.first_step:
                 self.button_next.invoke()
 
@@ -293,97 +381,14 @@ def read_file(file_path):
     except Exception as e:
         return f"Ошибка чтения файла: {e}"
 
-# Действие 4-х кнопок на первой вкладке (режим Тестовый)
-def on_button_click(button_number):
-    global COLOR_GREEN 
-    global COLOR_RED 
-
-    global data_score_positive
-    global data_score_negative
-    global true_answer
-    global first_step
-    
-    if button_number == true_answer:
-        bt = buttons[button_number]
-        bt.config(bg=COLOR_GREEN)
-        if first_step:
-            data_score_positive += 1
-            label_score_positive1.config(text=f'+{data_score_positive}')
-    else:
-        bt = buttons[button_number]
-        bt.config(bg=COLOR_RED)
-        if first_step:
-            data_score_negative += 1
-            label_score_negative1.config(text=f' -{data_score_negative}')
-    
-    first_step = False
-
-# Действие на первой вкладке (режим Тестирование)
-def on_button_next():
-    global COLOR_GRAY
-
-    global true_answer
-    global first_step
-
-    first_step = True
-
-    
-
-    indexes = generate_random_indexes(max=len(russ_words)-1)
-    print(indexes)
-    
-    true_answer = random.randint(0, 3)
-    print(true_answer)
-
-    ind = indexes[true_answer]
-    label_text1.config(text=chin_words[ind])
-
-    i: int = 0
-    for button in buttons:
-        ind = indexes[i]
-        button.config(text=russ_words[ind], bg=COLOR_GRAY)
-        i += 1
-    
-    bm.set_label(label_text1)
-
-    print(bm.state)
-    bm.check()
-    print(bm.state)
-    bm.true()
-    print(bm.state)
-    bm.check()
-    print(bm.state)
 
 
 
 
 
 
-        
-# Действие нажатия на Enter
-def enter_event(event):
-    match notebook.index(notebook.select()):
-        case 0:
-            pass
-        case 1:
-            if first_step:
-                button_check.invoke()
-            else:
-                button_next2.invoke()
-            print('ENTER')
-        case 2:
-            pass
 
-# действия при нажатии на цифровые клавиши
-def num_event1(event):
-    match notebook.index(notebook.select()):
-        case 0:
-            i = int(event.keysym) - 1
-            buttons[i].invoke()
-        case 1:
-            pass
-        case 2:
-            pass
+
 
 
 
@@ -451,44 +456,7 @@ notebook = ttk.Notebook(root)
 ############################################################################
 # Вкладка 1
 
-tab1 = ttk.Frame(notebook)
-notebook.add(tab1, text=' Тестовый ')
-
-frame_base1 = tk.Frame(tab1)
-frame_base1.pack(expand=1, fill='both')
-
-
-label_text1 = tk.Label(frame_base1, text="[***]", font=font_big)
-label_text1.pack(pady=10)
-
-label_score_positive1 = tk.Label(frame_base1, text=f'+{data_score_positive}', font=font_score)
-label_score_positive1.place(x = 10, y = 50)
-
-label_score_negative1 = tk.Label(frame_base1, text=f' -{data_score_negative}', font=font_score)
-label_score_negative1.place(x = 10, y = 100)
-
-frame1 = tk.Frame(frame_base1)
-frame1.pack(side=tk.TOP, pady=10)
-
-buttons = []
-for i in range(0, 4):
-    button = tk.Button(frame1, text=f"****", 
-                       command=lambda num=i: on_button_click(num), 
-                       font=font_small, 
-                       padx=10,
-                       width=50)
-    #button.pack(side=tk.LEFT, padx=10)
-    button.grid(row=i, column=0, pady=10, padx=10 )
-    root.bind(str(i+1), num_event1)
-    buttons.append(button)
-
-
-button_next1 = tk.Button(tab1, text=f"Next", 
-                        command=lambda: on_button_next(), 
-                        font=font_small, 
-                        width=200, height=50,
-                        bg='#DDDDDD')
-button_next1.pack(side=tk.RIGHT, anchor=tk.SE)
+t1 = TestMachine(window=root, notebook=notebook, russ_dict=russ_words, chin_dict=chin_words)
 
 
 
@@ -496,7 +464,7 @@ button_next1.pack(side=tk.RIGHT, anchor=tk.SE)
 # Вкладка 2
 
 
-bm = BrainMachine(window=root, notebook=notebook, russ_dict=russ_words, chin_dict=chin_words)
+t2 = BrainMachine(window=root, notebook=notebook, russ_dict=russ_words, chin_dict=chin_words)
 
 
 
@@ -512,9 +480,5 @@ frame_base3.pack(expand=1, fill='both')
 ############################################################################
 
 notebook.pack(expand=1, fill='both')
-
-
-
-
 
 root.mainloop()
