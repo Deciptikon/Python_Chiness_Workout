@@ -3,7 +3,7 @@ from tkinter import ttk, filedialog
 from transitions import Machine
 import random
 
-VERSION = '0.3.0'
+VERSION = '0.3.1'
 NAME_PROGRAM = 'Chinese Trainer'
 
 COLOR_GREEN = "#00AA55"
@@ -35,13 +35,11 @@ class BaseStateMachine:
 
         self.selected_tab = 0
 
-        self.window.bind('<space>', self.space_event)
+        
         self.window.bind('<Return>', self.enter_event)
         self.notebook.bind("<<NotebookTabChanged>>", self.on_tab_changed)
     
-    # Действие при нажатии на Space
-    def space_event(self, event):
-        pass
+    
 
     # Действие нажатия на Enter
     def enter_event(self, event):
@@ -61,9 +59,23 @@ class TestMachine(BaseStateMachine, object):
     data_score_positive: int = 0
     data_score_negative: int = 0
 
+    num_button = None
+
     def __init__(self, window, notebook, russ_dict: list[str], chin_dict: list[str]):
         super().__init__( window, notebook, russ_dict, chin_dict)
-
+        states_test_machine = ['Basic', 'Answer', 'True_answer', 'False_answer']
+        transitions_test_machine = [
+            {'trigger': 'check', 'source': 'Basic', 'dest': 'Answer'},
+            {'trigger': 'true', 'source': 'Answer', 'dest': 'True_answer'},
+            {'trigger': 'false', 'source': 'Answer', 'dest': 'False_answer'},
+            {'trigger': 'check', 'source': ['True_answer', 'False_answer'], 'dest': 'Answer'},
+            {'trigger': 'next', 'source': ['True_answer', 'False_answer'], 'dest': 'Basic'},
+            {'trigger': 'next', 'source': 'Basic', 'dest': 'Basic'}
+        ]
+        self.machine = Machine(model=self, 
+                              states=states_test_machine, 
+                              transitions=transitions_test_machine, 
+                              initial='Basic')
 
         self.tab = ttk.Frame(self.notebook)
         self.notebook.add(self.tab, text=' Тестовый ')
@@ -104,25 +116,12 @@ class TestMachine(BaseStateMachine, object):
                                 bg='#DDDDDD')
         self.button_next.pack(side=tk.RIGHT, anchor=tk.SE)
 
-    # Действие 4-х кнопок на первой вкладке (режим Тестовый)
-    def on_button_click(self, button_number):
-        if button_number == self.true_answer:
-            bt = self.buttons[button_number]
-            bt.config(bg=COLOR_GREEN)
-            if self.first_step:
-                self.data_score_positive += 1
-                self.label_score_positive.config(text=f'+{self.data_score_positive}')
-        else:
-            bt = self.buttons[button_number]
-            bt.config(bg=COLOR_RED)
-            if self.first_step:
-                self.data_score_negative += 1
-                self.label_score_negative.config(text=f' -{self.data_score_negative}')
-        self.first_step = False
+    def on_enter_Basic(self):
+        print("State = Basic")
 
-    # Действие на первой вкладке (режим Тестирование)
-    def on_button_next(self):
+        self.num_button = None
         self.first_step = True
+
         indexes = generate_random_indexes(max=len(self.russ_words)-1)
         print(indexes)
     
@@ -138,17 +137,51 @@ class TestMachine(BaseStateMachine, object):
             button.config(text=self.russ_words[ind], bg=COLOR_GRAY)
             i += 1
 
+    # Callback-метод, вызываемый при входе в состояние Answer
+    def on_enter_Answer(self):
+        print("State = Answer")
+        if self.num_button == self.true_answer:
+            self.true()
+        else:
+            self.false()
+
+    # Callback-метод, вызываемый при входе в состояние True_answer
+    def on_enter_True_answer(self):
+        print("State = True_answer")
+        bt = self.buttons[self.num_button]
+        bt.config(bg=COLOR_GREEN)
+        if self.first_step:
+            self.data_score_positive += 1
+            self.label_score_positive.config(text=f'+{self.data_score_positive}')
+        self.first_step = False
+
+    # Callback-метод, вызываемый при входе в состояние False_answer
+    def on_enter_False_answer(self):
+        print("State = False_answer")
+        bt = self.buttons[self.num_button]
+        bt.config(bg=COLOR_RED)
+        if self.first_step:
+            self.data_score_negative += 1
+            self.label_score_negative.config(text=f' -{self.data_score_negative}')
+        self.first_step = False
+
+
+    # Действие 4-х кнопок на первой вкладке (режим Тестовый)
+    def on_button_click(self, button_number):
+        self.num_button = button_number
+        self.check()
+
+    # Действие на первой вкладке (режим Тестирование)
+    def on_button_next(self):
+        self.next()
+
     # действия при нажатии на цифровые клавиши
     def num_event(self, event):
         if self.notebook.index(self.notebook.select()) == 0:
+            print(event)
             i = int(event.keysym) - 1
-            self.buttons[i].invoke()
-
-    def space_event(self, event):
-        print('button_next.invoke()')
-        if self.notebook.index(self.notebook.select()) == 0:
-                print('button_next.invoke()')
-                self.button_next.invoke()
+            if i in range(0, 4):
+                self.buttons[i].invoke()
 
 
 
@@ -245,6 +278,8 @@ class BrainMachine(BaseStateMachine, object):
 
 
     # Callback-метод, вызываемый при выходе из состояния Answer
+    # Этот код для примера, в программе он не нужен. Но из-за того что я могу забыть о нём,
+    # я оставил это здесь
     def on_exit_Answer(self):
         print("Вы вышли из состояния Answer")
 
@@ -275,11 +310,6 @@ class BrainMachine(BaseStateMachine, object):
     # Действие при нажатии на кнопку проверки (в письменном режиме)
     def on_button_check(self):
         self.check()
-
-    def space_event(self, event):
-        print(self.notebook.index(self.notebook.select()) )
-        if self.notebook.index(self.notebook.select()) == 1 and not self.first_step:
-                self.button_next.invoke()
 
     def enter_event(self, event):
         if self.notebook.index(self.notebook.select()) == 1:
@@ -385,7 +415,18 @@ def read_file(file_path):
 
 
 
-
+# Действие при нажатии на Space
+def space_event(event):
+    print('SPACE -->')
+    index_tab = notebook.index(notebook.select())
+    match index_tab:
+        case 0:
+            t1.on_button_next()
+        case 1:
+            if not t2.first_step:
+                t2.on_button_next()
+        case 2:
+            pass
 
 
 
@@ -480,5 +521,7 @@ frame_base3.pack(expand=1, fill='both')
 ############################################################################
 
 notebook.pack(expand=1, fill='both')
+
+root.bind('<space>', space_event)
 
 root.mainloop()
