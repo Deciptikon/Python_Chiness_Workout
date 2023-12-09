@@ -10,21 +10,9 @@ COLOR_GREEN = "#00AA55"
 COLOR_RED   = "#AA2222"
 COLOR_GRAY  = "#DDDDDD"
 
-# счёт правильных ответов
-data_score_positive: int = 0
-
-# счёт НЕправильных ответов
-data_score_negative: int = 0
-
-# скрытвй параметр, номер верного ответа
-true_answer: int = 0
-
-# скрытый параметр, первый ход, первое нажатие
-first_step: bool = True
-
-# Массивы содержащие распарсенный словарь
-russ_words: list[str] = []
-chin_words: list[str] = []
+font_big   = ("Arial", 100)  
+font_small = ("Arial", 18)  
+font_score = ("Arial", 30) 
 
 class BaseTab:
     def __init__(self, window, notebook, russ_dict: list[str], chin_dict: list[str]):
@@ -359,41 +347,130 @@ class WindowDiapasone(object):
 
 
 
+class MainWindow(object):
+    # счёт правильных ответов
+    data_score_positive: int = 0
 
-# Процедура открытия окнв с информацией о программе
-def on_about_program():
-    print('About ....')
-    open_about_window()
+    # счёт НЕправильных ответов
+    data_score_negative: int = 0
 
-# Открывает меню выбора нового словаря
-def on_open_file():
-    global russ_words
-    global chin_words
-    print('Open Fire, sorry... File')
-    file_path = filedialog.askopenfilename(title='Open Fire, sorry... File', 
-                                           filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
-    if file_path:
-        print(f"Выбранный файл: {file_path}")
+    # скрытвй параметр, номер верного ответа
+    true_answer: int = 0
+
+    # скрытый параметр, первый ход, первое нажатие
+    first_step: bool = True
+
+    # Массивы содержащие распарсенный словарь
+    russ_words: list[str] = []
+    chin_words: list[str] = []
+
+    def __init__(self, root) -> None:
+        self.root = root
+
+        self.root.title(f'{NAME_PROGRAM} {VERSION}')
+        self.root.iconbitmap(default='icon.ico')
+        #root.attributes("-alpha", 0.5)
+        self.root.geometry("1000x600+400+200")
+
+        self.style = ttk.Style()
+        self.style.theme_use('default')
+        self.style.configure('TNotebook.Tab', background="White")
+        self.style.map("TNotebook", background= [("selected", "White")])
+
+        file_content = self.read_file('chinese_dict.txt') #"Words.txt"
+        self.russ_words, self.chin_words = parse_dictonary(file_content)
+
+        # Создаем меню  ############################################################
+
+        self.menu_bar = tk.Menu(self.root)
+
+        # Создаем подменю "Файл" ###################################################
+        self.file_menu = tk.Menu(self.menu_bar, tearoff=0)
+        self.file_menu.add_command(label="Открыть", command=self.on_open_file)
+        #file_menu.add_command(label="Сохранить", command=on_menu_click)
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label="Выход", command=self.root.destroy)
+        # Добавляем подменю "Файл" к основному меню 
+        self.menu_bar.add_cascade(label="Файл", menu=self.file_menu)
+
+        # Создаем подменю "Правка" #################################################
+        edit_menu = tk.Menu(menu_bar, tearoff=0)
+        edit_menu.add_command(label="Диапазон", command=on_diapason_words)
+
+        # Добавляем подменю "Правка" к основному меню
+        menu_bar.add_cascade(label="Правка", menu=edit_menu)
+
+        # Создаем подменю "Помощь" #################################################
+        help_menu = tk.Menu(menu_bar, tearoff=0)
+        help_menu.add_command(label="О программе", command=on_about_program)
+
+        # Добавляем подменю "Помощь" к основному меню
+        menu_bar.add_cascade(label="Помощь", menu=help_menu)
+
+        # Устанавливаем основное меню для главного окна
+        root.config(menu=menu_bar)
+
+        # Создаем виджет вкладок ###################################################
+        notebook = ttk.Notebook(root)
+
+        ############################################################################
+        # Вкладка 1
+        t1 = TestMachine(window=root, notebook=notebook, russ_dict=russ_words, chin_dict=chin_words)
+
+        ############################################################################
+        # Вкладка 2
+        t2 = BrainMachine(window=root, notebook=notebook, russ_dict=russ_words, chin_dict=chin_words)
+
+        ############################################################################
+        # Вкладка 3
+
+        tab3 = ttk.Frame(notebook)
+        notebook.add(tab3, text=' Адаптивный ')
+
+        frame_base3 = tk.Frame(tab3)
+        frame_base3.pack(expand=1, fill='both')
+
+        ############################################################################
+
+        notebook.pack(expand=1, fill='both')
+        root.bind('<space>', space_event)
+
+        on_diapason_words()
+
+    # Процедура открытия окна с информацией о программе
+    def on_about_program(self):
+        print('About ....')
+        self.open_about_window()
+
+    # Открывает меню выбора нового словаря
+    def on_open_file(self):
+        self.russ_words
+        self.chin_words
+        print('Open Fire, sorry... File')
+        file_path = filedialog.askopenfilename(title='Open Fire, sorry... File', 
+                                               filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
+        if file_path:
+            print(f"Выбранный файл: {file_path}")
     
-    file_content = read_file(file_path)
-    russ_words, chin_words = parse_dictonary(file_content)
+        file_content = read_file(file_path)
+        self.russ_words, self.chin_words = parse_dictonary(file_content)
 
-    t1.set_dicts(russ_dict=russ_words, chin_dict=chin_words)
-    t2.set_dicts(russ_dict=russ_words, chin_dict=chin_words)
-
-
-
-def on_diapason_words():
-    diap_window = WindowDiapasone(root=root)
+        self.t1.set_dicts(russ_dict=russ_words, chin_dict=chin_words)
+        self.t2.set_dicts(russ_dict=russ_words, chin_dict=chin_words)
 
 
-# Открывает модальное окно с информацией о программе
-def open_about_window():
-    modal_window = tk.Toplevel(root)
-    modal_window.title("О программе")
-    modal_window.geometry("400x350+650+200")
-    label = tk.Label(modal_window, 
-                     text=F"""Это простой тренер китайского языка.
+
+    def on_diapason_words():
+        diap_window = WindowDiapasone(root=root)
+
+
+    # Открывает модальное окно с информацией о программе
+    def open_about_window(self):
+        self.modal_window = tk.Toplevel(self.root)
+        self.modal_window.title("О программе")
+        self.modal_window.geometry("400x350+650+200")
+        self.label = tk.Label(self.modal_window, 
+                        text=F"""Это простой тренер китайского языка.
 
 В нём имеются 3 режима обучения:
  - на основе тестирования;                            
@@ -411,11 +488,37 @@ def open_about_window():
  
  """)
     
-    label.pack(padx=20, pady=20)
-    # Устанавливаем родительское окно для модального окна
-    modal_window.transient(root)
-    # Ожидаем закрытия модального окна перед возвращением к основному окну
-    modal_window.wait_window(modal_window)
+        self.label.pack(padx=20, pady=20)
+        # Устанавливаем родительское окно для модального окна
+        self.modal_window.transient(self.root)
+        # Ожидаем закрытия модального окна перед возвращением к основному окну
+        self.modal_window.wait_window(self.modal_window)
+
+    def parse_dictonary(file_dictonary: str) -> [list[str], list[str]]:
+        russ: list[str] = []
+        chin: list[str] = []
+        for line in file_dictonary.split('\n'):
+            if len(line.strip()) > 0:
+                c,r = line.split(' : ')
+                russ.append(cut_str(long_str=r, max_len=50, slice_symbol=','))
+                chin.append(c)
+        return russ, chin
+    
+    # Действие при нажатии на Space
+    def space_event(self, event):
+        print('SPACE -->')
+        index_tab = self.notebook.index(notebook.select())
+        match index_tab:
+            case 0:
+                self.t1.on_button_next()
+            case 1:
+                if not self.t2.first_step:
+                    self.t2.on_button_next()
+            case 2:
+                pass
+
+
+
 
 # генерируем несколько различных целых чисел
 def generate_random_indexes(min: int = 0, max: int = 7, num: int = 4) -> list[int]:
@@ -444,28 +547,9 @@ def read_file(file_path):
     except Exception as e:
         return f"Ошибка чтения файла: {e}"
 
-# Действие при нажатии на Space
-def space_event(event):
-    print('SPACE -->')
-    index_tab = notebook.index(notebook.select())
-    match index_tab:
-        case 0:
-            t1.on_button_next()
-        case 1:
-            if not t2.first_step:
-                t2.on_button_next()
-        case 2:
-            pass
 
-def parse_dictonary(file_dictonary: str) -> [list[str], list[str]]:
-    russ: list[str] = []
-    chin: list[str] = []
-    for line in file_dictonary.split('\n'):
-        if len(line.strip()) > 0:
-            c,r = line.split(' : ')
-            russ.append(cut_str(long_str=r, max_len=50, slice_symbol=','))
-            chin.append(c)
-    return russ, chin
+
+
 
 ################################################################################
 ############  Тело GUI  ########################################################
@@ -473,79 +557,5 @@ def parse_dictonary(file_dictonary: str) -> [list[str], list[str]]:
 
 
 root = tk.Tk()
-root.title(f'{NAME_PROGRAM} {VERSION}')
-root.iconbitmap(default='icon.ico')
 
-#root.attributes("-alpha", 0.5)
-
-font_big = ("Arial", 100)  
-font_small = ("Arial", 18)  
-font_score = ("Arial", 30)  
-
-root.geometry("1000x600+400+200")
-
-style = ttk.Style()
-style.theme_use('default')
-style.configure('TNotebook.Tab', background="White")
-style.map("TNotebook", background= [("selected", "White")])
-
-file_content = read_file('chinese_dict.txt') #"Words.txt"
-russ_words, chin_words = parse_dictonary(file_content)
-
-# Создаем меню  ############################################################
-
-menu_bar = tk.Menu(root)
-
-# Создаем подменю "Файл" ###################################################
-file_menu = tk.Menu(menu_bar, tearoff=0)
-file_menu.add_command(label="Открыть", command=on_open_file)
-#file_menu.add_command(label="Сохранить", command=on_menu_click)
-file_menu.add_separator()
-file_menu.add_command(label="Выход", command=root.destroy)
-# Добавляем подменю "Файл" к основному меню 
-menu_bar.add_cascade(label="Файл", menu=file_menu)
-
-# Создаем подменю "Правка" #################################################
-edit_menu = tk.Menu(menu_bar, tearoff=0)
-edit_menu.add_command(label="Диапазон", command=on_diapason_words)
-
-# Добавляем подменю "Правка" к основному меню
-menu_bar.add_cascade(label="Правка", menu=edit_menu)
-
-# Создаем подменю "Помощь" #################################################
-help_menu = tk.Menu(menu_bar, tearoff=0)
-help_menu.add_command(label="О программе", command=on_about_program)
-
-# Добавляем подменю "Помощь" к основному меню
-menu_bar.add_cascade(label="Помощь", menu=help_menu)
-
-# Устанавливаем основное меню для главного окна
-root.config(menu=menu_bar)
-
-# Создаем виджет вкладок ###################################################
-notebook = ttk.Notebook(root)
-
-############################################################################
-# Вкладка 1
-t1 = TestMachine(window=root, notebook=notebook, russ_dict=russ_words, chin_dict=chin_words)
-
-############################################################################
-# Вкладка 2
-t2 = BrainMachine(window=root, notebook=notebook, russ_dict=russ_words, chin_dict=chin_words)
-
-############################################################################
-# Вкладка 3
-
-tab3 = ttk.Frame(notebook)
-notebook.add(tab3, text=' Адаптивный ')
-
-frame_base3 = tk.Frame(tab3)
-frame_base3.pack(expand=1, fill='both')
-
-############################################################################
-
-notebook.pack(expand=1, fill='both')
-root.bind('<space>', space_event)
-
-on_diapason_words()
 root.mainloop()
