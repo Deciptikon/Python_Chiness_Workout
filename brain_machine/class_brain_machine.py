@@ -3,8 +3,8 @@ from tkinter import ttk
 from transitions import Machine
 import random
 
-from base_tab import BaseTab
-from constants import *
+from base_tab.class_base_tab import BaseTab
+import constants
 
 class BrainMachine(BaseTab, object):
     true_answer: int = 0
@@ -34,31 +34,39 @@ class BrainMachine(BaseTab, object):
         self.frame_base = tk.Frame(self.tab)
         self.frame_base.pack(expand=1, fill='both')
 
-        self.label_text = tk.Label(self.frame_base, text="[***]", font=FONT_BIG)
+        self.label_text = tk.Label(self.frame_base, 
+                                   text="[***]", 
+                                   font=constants.FONT_BIG)
         self.label_text.pack(pady=10)
 
-        self.label_score_positive = tk.Label(self.frame_base, text=f'+{self.data_score_positive}', font=FONT_SCORE)
+        self.label_score_positive = tk.Label(self.frame_base, 
+                                             text=f'+{self.data_score_positive}', 
+                                             font=constants.FONT_SCORE)
         self.label_score_positive.place(x = 10, y = 50)
 
-        self.label_score_negative = tk.Label(self.frame_base, text=f' -{self.data_score_negative}', font=FONT_SCORE)
+        self.label_score_negative = tk.Label(self.frame_base, 
+                                             text=f' -{self.data_score_negative}', 
+                                             font=constants.FONT_SCORE)
         self.label_score_negative.place(x = 10, y = 100)
 
-        self.text_input = tk.Entry(self.frame_base, font=FONT_SMALL, bg='#DDDDDD', width=200)
+        self.text_input = tk.Entry(self.frame_base, font=constants.FONT_SMALL, bg='#DDDDDD', width=200)
         self.text_input.pack(pady=10, padx=100)
 
         self.button_check = tk.Button(self.frame_base, text=f"Check", 
                                 command=lambda: self.on_button_check(), 
-                                font=FONT_SMALL, 
+                                font=constants.FONT_SMALL, 
                                 width=200, #height=50,
                                 bg='#DDDDDD')
         self.button_check.pack( pady=10, padx=50 )
 
-        self.label_text_checker = tk.Label(self.frame_base, text="Введите перевод по памяти.\n", font=FONT_SMALL)
+        self.label_text_checker = tk.Label(self.frame_base, 
+                                           text="Введите перевод по памяти.\n", 
+                                           font=constants.FONT_SMALL)
         self.label_text_checker.pack(pady=50)
 
         self.button_next = tk.Button(self.tab, text=f"Next", 
                         command=lambda: self.on_button_next(), 
-                        font=FONT_SMALL, 
+                        font=constants.FONT_SMALL, 
                         width=200, height=50,
                         bg='#DDDDDD')
         self.button_next.pack(side=tk.BOTTOM, anchor=tk.SE, pady=0)
@@ -71,7 +79,7 @@ class BrainMachine(BaseTab, object):
         self.first_step = True
         self.label_text.config(text=self.chin_words[self.true_answer])
         self.text_input.delete(0, len(self.text_input.get()))
-        self.button_check.config(bg=COLOR_GRAY)
+        self.button_check.config(bg=constants.COLOR_GRAY)
         self.label_text_checker.config(text="Введите перевод по памяти.\n")
 
     # Callback-метод, вызываемый при входе в состояние Answer
@@ -102,7 +110,7 @@ class BrainMachine(BaseTab, object):
         self.data_score_positive += 1
         self.first_step = False
         self.label_score_positive.config(text=f'+{self.data_score_positive}')
-        self.button_check.config(bg=COLOR_GREEN)
+        self.button_check.config(bg=constants.COLOR_GREEN)
         self.label_text_checker.config(text=f'ВЕРНО!!!\n\"{self.true_words}\"')
 
     # Callback-метод, вызываемый при входе в состояние False_answer
@@ -111,7 +119,7 @@ class BrainMachine(BaseTab, object):
         self.data_score_negative += 1
         self.first_step = False
         self.label_score_negative.config(text=f'-{self.data_score_negative}')
-        self.button_check.config(bg=COLOR_RED)
+        self.button_check.config(bg=constants.COLOR_RED)
         self.label_text_checker.config(text=f'ОШИБКА, должно быть:\n\"{self.true_words}\"')
 
     # Действие кнопки Next на второй вкладке (режим письменный)

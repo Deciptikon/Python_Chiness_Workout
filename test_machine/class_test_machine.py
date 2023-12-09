@@ -3,8 +3,8 @@ from tkinter import ttk
 from transitions import Machine
 import random
 
-from base_tab import BaseTab
-from constants import *
+from base_tab.class_base_tab import BaseTab
+import constants
 
 class TestMachine(BaseTab, object):
     true_answer: int = 0
@@ -35,13 +35,19 @@ class TestMachine(BaseTab, object):
         self.frame_base = tk.Frame(self.tab)
         self.frame_base.pack(expand=1, fill='both')
 
-        self.label_text = tk.Label(self.frame_base, text="[***]", font=FONT_BIG)
+        self.label_text = tk.Label(self.frame_base, 
+                                   text="[***]", 
+                                   font=constants.FONT_BIG)
         self.label_text.pack(pady=10)
 
-        self.label_score_positive = tk.Label(self.frame_base, text=f'+{self.data_score_positive}', font=FONT_SCORE)
+        self.label_score_positive = tk.Label(self.frame_base, 
+                                             text=f'+{self.data_score_positive}', 
+                                             font=constants.FONT_SCORE)
         self.label_score_positive.place(x = 10, y = 50)
 
-        self.label_score_negative = tk.Label(self.frame_base, text=f' -{self.data_score_negative}', font=FONT_SCORE)
+        self.label_score_negative = tk.Label(self.frame_base, 
+                                             text=f' -{self.data_score_negative}', 
+                                             font=constants.FONT_SCORE)
         self.label_score_negative.place(x = 10, y = 100)
 
         self.frame = tk.Frame(self.frame_base)
@@ -51,7 +57,7 @@ class TestMachine(BaseTab, object):
         for i in range(1, 5):
             self.button = tk.Button(self.frame, text=f"****", 
                                 command=lambda num=i-1: self.on_button_click(num), 
-                                font=FONT_SMALL, 
+                                font=constants.FONT_SMALL, 
                                 padx=10,
                                 width=50)
             self.button.grid(row=i-1, column=0, pady=10, padx=10 )
@@ -60,7 +66,7 @@ class TestMachine(BaseTab, object):
 
         self.button_next = tk.Button(self.tab, text=f"Next", 
                                 command=lambda: self.on_button_next(), 
-                                font=FONT_SMALL, 
+                                font=constants.FONT_SMALL, 
                                 width=200, height=50,
                                 bg='#DDDDDD')
         self.button_next.pack(side=tk.RIGHT, anchor=tk.SE)
@@ -83,7 +89,7 @@ class TestMachine(BaseTab, object):
         i: int = 0
         for button in self.buttons:
             ind = indexes[i]
-            button.config(text=self.russ_words[ind], bg=COLOR_GRAY)
+            button.config(text=self.russ_words[ind], bg=constants.COLOR_GRAY)
             i += 1
 
     # Callback-метод, вызываемый при входе в состояние Answer
@@ -98,7 +104,7 @@ class TestMachine(BaseTab, object):
     def on_enter_True_answer(self):
         print("State = True_answer")
         bt = self.buttons[self.num_button]
-        bt.config(bg=COLOR_GREEN)
+        bt.config(bg=constants.COLOR_GREEN)
         if self.first_step:
             self.data_score_positive += 1
             self.label_score_positive.config(text=f'+{self.data_score_positive}')
@@ -108,7 +114,7 @@ class TestMachine(BaseTab, object):
     def on_enter_False_answer(self):
         print("State = False_answer")
         bt = self.buttons[self.num_button]
-        bt.config(bg=COLOR_RED)
+        bt.config(bg=constants.COLOR_RED)
         if self.first_step:
             self.data_score_negative += 1
             self.label_score_negative.config(text=f' -{self.data_score_negative}')

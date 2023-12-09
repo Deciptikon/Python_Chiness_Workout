@@ -2,10 +2,10 @@ import tkinter as tk
 from tkinter import ttk, filedialog
 import random
 
-from ..constants import *
-from ..test_machine.class_test_machine import TestMachine
-from ..brain_machine.class_brain_machine import BrainMachine
-from ..window_diapasone.class_window_diapasone import WindowDiapasone
+import constants 
+from test_machine.class_test_machine import TestMachine
+from brain_machine.class_brain_machine import BrainMachine
+from window_diapasone.class_window_diapasone import WindowDiapasone
 
 class MainWindow(object):
     # счёт правильных ответов
@@ -27,7 +27,7 @@ class MainWindow(object):
     def __init__(self, root) -> None:
         self.root = root
 
-        self.root.title(f'{NAME_PROGRAM} {VERSION}')
+        self.root.title(f'{constants.NAME_PROGRAM} {constants.VERSION}')
         self.root.iconbitmap(default='icon.ico')
         #root.attributes("-alpha", 0.5)
         self.root.geometry("1000x600+400+200")
@@ -149,7 +149,7 @@ class MainWindow(object):
  - на сонове памяти;                                      
  - на основе адаптированного подбора слов;
  
- Текущая версия программы {VERSION}
+ Текущая версия программы {constants.VERSION}
  
  Программа абсолютно бесплатна ;-)
 

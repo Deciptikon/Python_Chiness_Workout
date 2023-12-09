@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from constants import *
+import constants
 
 class WindowDiapasone(object):
     def __init__(self, root, tab1, tab2, russ_dict, chin_dict) -> None:
@@ -17,7 +17,7 @@ class WindowDiapasone(object):
         self.frame_base = tk.Frame(self.modal_window)
         self.frame_base.pack(expand=1, fill='both')
 
-        self.label_min = tk.Label(self.frame_base, text="Min", font=FONT_SMALL)
+        self.label_min = tk.Label(self.frame_base, text="Min", font=constants.FONT_SMALL)
         self.label_min.pack(pady=10)
         self.spin_value_min = tk.StringVar(value='0')
         self.spinbox_min = ttk.Spinbox(self.frame_base, 
@@ -25,7 +25,7 @@ class WindowDiapasone(object):
                                        textvariable=self.spin_value_min)
         self.spinbox_min.pack()
 
-        self.label_max = tk.Label(self.frame_base, text="Max", font=FONT_SMALL)
+        self.label_max = tk.Label(self.frame_base, text="Max", font=constants.FONT_SMALL)
         self.label_max.pack(pady=10)
         self.spin_value_max = tk.StringVar(value=f'{len(self.russ_words)-1}')
         self.spinbox_max = ttk.Spinbox(self.frame_base, 
