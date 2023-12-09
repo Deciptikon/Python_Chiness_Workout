@@ -2,10 +2,10 @@ import tkinter as tk
 from tkinter import ttk, filedialog
 import random
 
-from constants import *
-from test_machine import TestMachine
-from brain_machine import BrainMachine
-from window_diapasone import WindowDiapasone
+from ..constants import *
+from ..test_machine.class_test_machine import TestMachine
+from ..brain_machine.class_brain_machine import BrainMachine
+from ..window_diapasone.class_window_diapasone import WindowDiapasone
 
 class MainWindow(object):
     # счёт правильных ответов
