@@ -12,7 +12,10 @@ class WindowDiapasone(object):
         
         self.modal_window = tk.Toplevel(self.root)
         self.modal_window.title("Настройка диапазона")
-        self.modal_window.geometry("300x300+650+200")
+        
+        str_POSX = str(constants.POSX_DIAPASONE_WINDOW)
+        str_POSX = str_POSX.rstrip('0').rstrip('.') if '.' in str_POSX else str_POSX
+        self.modal_window.geometry(f"{constants.WIDTH_DIAPASONE_WINDOW}x{constants.HEIGHT_DIAPASONE_WINDOW}+"+str_POSX+f"+{constants.POSY_DIAPASONE_WINDOW}")
 
         self.frame_base = tk.Frame(self.modal_window)
         self.frame_base.pack(expand=1, fill='both')
