@@ -1,9 +1,10 @@
 class BaseTab:
-    def __init__(self, window, notebook, russ_dict: list[str], chin_dict: list[str]):
+    def __init__(self, window, notebook, russ_dict: list[str], chin_dict: list[str], nameTab: str = ' *** '):
         self.window = window
         self.notebook = notebook
         self.russ_words = russ_dict
         self.chin_words = chin_dict
+        self.nameTab = nameTab
         self.selected_tab = 0
         self.window.bind('<Return>', self.enter_event)
         self.notebook.bind("<<NotebookTabChanged>>", self.on_tab_changed)

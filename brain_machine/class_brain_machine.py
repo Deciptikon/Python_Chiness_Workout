@@ -12,8 +12,8 @@ class BrainMachine(BaseTab, object):
     data_score_positive: int = 0
     data_score_negative: int = 0
 
-    def __init__(self, window, notebook, russ_dict: list[str], chin_dict: list[str]):
-        super().__init__( window, notebook, russ_dict, chin_dict)
+    def __init__(self, window, notebook, russ_dict: list[str], chin_dict: list[str], nameTab: str = ' Письменный '):
+        super().__init__( window, notebook, russ_dict, chin_dict, nameTab)
         states_brain_machine = ['Basic', 'Answer', 'True_answer', 'False_answer']
         transitions_brain_machine = [
             {'trigger': 'check', 'source': 'Basic', 'dest': 'Answer'},
@@ -29,7 +29,7 @@ class BrainMachine(BaseTab, object):
                               initial='Basic')
         
         self.tab = ttk.Frame(self.notebook)
-        self.notebook.add(self.tab, text=' Письменный ')
+        self.notebook.add(self.tab, text=self.nameTab)
 
         self.frame_base = tk.Frame(self.tab)
         self.frame_base.pack(expand=1, fill='both')

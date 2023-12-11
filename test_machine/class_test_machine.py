@@ -13,8 +13,10 @@ class TestMachine(BaseTab, object):
     data_score_negative: int = 0
     num_button = None
 
-    def __init__(self, window, notebook, russ_dict: list[str], chin_dict: list[str]):
-        super().__init__( window, notebook, russ_dict, chin_dict)
+    def __init__(self, window, notebook, russ_dict: list[str], chin_dict: list[str], nameTab: str):
+        super().__init__( window, notebook, russ_dict, chin_dict, nameTab)
+
+        
         states_test_machine = ['Basic', 'Answer', 'True_answer', 'False_answer']
         transitions_test_machine = [
             {'trigger': 'check', 'source': 'Basic', 'dest': 'Answer'},
@@ -30,7 +32,7 @@ class TestMachine(BaseTab, object):
                               initial='Basic')
 
         self.tab = ttk.Frame(self.notebook)
-        self.notebook.add(self.tab, text=' Тестовый ')
+        self.notebook.add(self.tab, text=self.nameTab)
 
         self.frame_base = tk.Frame(self.tab)
         self.frame_base.pack(expand=1, fill='both')

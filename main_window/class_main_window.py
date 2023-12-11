@@ -5,6 +5,7 @@ import random
 import constants 
 from test_machine.class_test_machine import TestMachine
 from brain_machine.class_brain_machine import BrainMachine
+from adaption_machine.class_adaption_machine import AdaptionMachine
 from window_diapasone.class_window_diapasone import WindowDiapasone
 
 class MainWindow(object):
@@ -30,7 +31,7 @@ class MainWindow(object):
         self.root.title(f'{constants.NAME_PROGRAM} {constants.VERSION}')
         self.root.iconbitmap(default='icon.ico')
         #root.attributes("-alpha", 0.5)
-        self.root.geometry("1000x600+400+200")
+        self.root.geometry(f"{constants.WIDTH_MAIN_WINDOW}x{constants.HEIGHT_MAIN_WINDOW}+{constants.POSX_MAIN_WINDOW}+{constants.POSY_MAIN_WINDOW}")
 
         self.style = ttk.Style()
         self.style.theme_use('default')
@@ -78,7 +79,8 @@ class MainWindow(object):
         self.t1 = TestMachine(window=self.root, 
                               notebook=self.notebook, 
                               russ_dict=self.russ_words, 
-                              chin_dict=self.chin_words)
+                              chin_dict=self.chin_words,
+                              nameTab=' Тестовый ')
 
         ############################################################################
         # Вкладка 2
@@ -89,12 +91,18 @@ class MainWindow(object):
 
         ############################################################################
         # Вкладка 3
+        self.t3 = AdaptionMachine(window=self.root, 
+                                  notebook=self.notebook, 
+                                  russ_dict=self.russ_words, 
+                                  chin_dict=self.chin_words,
+                                  nameTab=' Адаптивный ')
+        
+        
+        #self.tab3 = ttk.Frame(self.notebook)
+        #self.notebook.add(self.tab3, text=' Адаптивный ')
 
-        self.tab3 = ttk.Frame(self.notebook)
-        self.notebook.add(self.tab3, text=' Адаптивный ')
-
-        self.frame_base3 = tk.Frame(self.tab3)
-        self.frame_base3.pack(expand=1, fill='both')
+        #self.frame_base3 = tk.Frame(self.tab3)
+        #self.frame_base3.pack(expand=1, fill='both')
 
         ############################################################################
 
