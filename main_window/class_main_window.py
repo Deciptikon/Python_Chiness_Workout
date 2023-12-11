@@ -192,7 +192,7 @@ class MainWindow(object):
                 if not self.t2.first_step:
                     self.t2.on_button_next()
             case 2:
-                self.t2.on_button_next()
+                self.t3.on_button_next()
     
     # Нажатия на цифры
     def num_event(self, event):
