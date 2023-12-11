@@ -7,6 +7,7 @@ from test_machine.class_test_machine import TestMachine
 from brain_machine.class_brain_machine import BrainMachine
 from adaption_machine.class_adaption_machine import AdaptionMachine
 from window_diapasone.class_window_diapasone import WindowDiapasone
+from data_base.window_db_change import WindowDBChange
 
 class MainWindow(object):
     # счёт правильных ответов
@@ -54,12 +55,15 @@ class MainWindow(object):
         # Добавляем подменю "Файл" к основному меню 
         self.menu_bar.add_cascade(label="Файл", menu=self.file_menu)
 
+
         # Создаем подменю "Правка" #################################################
         self.edit_menu = tk.Menu(self.menu_bar, tearoff=0)
         self.edit_menu.add_command(label="Диапазон", command=self.on_diapason_words)
-
+        self.edit_menu.add_command(label="База данных", command=self.on_db_change)
+        
         # Добавляем подменю "Правка" к основному меню
         self.menu_bar.add_cascade(label="Правка", menu=self.edit_menu)
+
 
         # Создаем подменю "Помощь" #################################################
         self.help_menu = tk.Menu(self.menu_bar, tearoff=0)
@@ -139,6 +143,9 @@ class MainWindow(object):
                                       tab2=self.t2,
                                       russ_dict=self.russ_words,
                                       chin_dict=self.chin_words)
+    
+    def on_db_change(self):
+        db_change_window = WindowDBChange(root=self.root, name_window='Редактирование базы данных')
 
 
     # Открывает модальное окно с информацией о программе
