@@ -11,3 +11,5 @@ class AdaptionMachine(TestMachine, object):
     # Теперь она должна учитывать показатели угадывания числа
     def generate_random_indexes(self, min: int = 0, max: int = 7, num: int = 4) -> list[int]:
         return random.sample(range(min, max + 1), num)
+    
+    

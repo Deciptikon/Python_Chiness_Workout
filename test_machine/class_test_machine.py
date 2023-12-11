@@ -63,7 +63,6 @@ class TestMachine(BaseTab, object):
                                 padx=10,
                                 width=50)
             self.button.grid(row=i-1, column=0, pady=10, padx=10 )
-            self.window.bind(str(i), self.num_event)
             self.buttons.append(self.button)
 
         self.button_next = tk.Button(self.tab, text=f"Next", 
@@ -132,10 +131,3 @@ class TestMachine(BaseTab, object):
     def on_button_next(self):
         self.next()
 
-    # действия при нажатии на цифровые клавиши
-    def num_event(self, event):
-        if self.notebook.index(self.notebook.select()) == 0:
-            print(event)
-            i = int(event.keysym) - 1
-            if i in range(0, 4):
-                self.buttons[i].invoke()

@@ -96,18 +96,15 @@ class MainWindow(object):
                                   russ_dict=self.russ_words, 
                                   chin_dict=self.chin_words,
                                   nameTab=' Адаптивный ')
-        
-        
-        #self.tab3 = ttk.Frame(self.notebook)
-        #self.notebook.add(self.tab3, text=' Адаптивный ')
-
-        #self.frame_base3 = tk.Frame(self.tab3)
-        #self.frame_base3.pack(expand=1, fill='both')
 
         ############################################################################
 
         self.notebook.pack(expand=1, fill='both')
+        
         self.root.bind('<space>', self.space_event)
+        
+        for i in range(1, len(self.t1.buttons)+1):
+            self.root.bind(str(i), self.num_event)
 
         self.on_diapason_words()
 
@@ -195,7 +192,21 @@ class MainWindow(object):
                 if not self.t2.first_step:
                     self.t2.on_button_next()
             case 2:
-                pass
+                self.t2.on_button_next()
+    
+    # Нажатия на цифры
+    def num_event(self, event):
+        print(event)
+        i = int(event.keysym) - 1
+        if i in range(0, 4):
+            match self.notebook.index(self.notebook.select()):
+                case 0:
+                    self.t1.buttons[i].invoke()
+                case 1:
+                    pass
+                case 2:
+                    self.t3.buttons[i].invoke()
+                
 
     # генерируем несколько различных целых чисел
     def generate_random_indexes(self, min: int = 0, max: int = 7, num: int = 4) -> list[int]:
