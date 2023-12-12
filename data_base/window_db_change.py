@@ -3,18 +3,16 @@ from tkinter import ttk, messagebox
 import random
 import sqlite3
 import constants
+from modal_windows.class_modal_window import ModalWindow
 
-class WindowDBChange(object):
-    def __init__(self, root, name_window: str = "Настройка диапазона") -> None:
-        self.root = root
-        self.modal_window = tk.Toplevel(self.root)
-        self.modal_window.title(name_window)
-        self.modal_window.geometry(f"400x300+600+200")
-
+class WindowDBChange( ModalWindow, object):
+    def __init__(self, root, name_window: str = "Настройка диапазона", geometry: str = '400x300+600+200') -> None:
+        super().__init__(root, name_window, geometry)
+        print('--------->')
         self.frame_base = tk.Frame(self.modal_window)
         self.frame_base.pack(expand=1, fill='both')
         
-        
+        print('--------->')
         self.create_table()
 
         # Список элементов
@@ -33,6 +31,9 @@ class WindowDBChange(object):
 
         self.button_read = ttk.Button(self.frame_base, text="Прочитать", command=self.get_from_bd)
         self.button_read.pack(pady=10)
+        
+        self.modal_window.transient(self.root)
+        self.modal_window.wait_window(self.modal_window)
     
     def create_table(self):
         # Подключение к базе данных (если её нет, она будет создана)
@@ -41,7 +42,7 @@ class WindowDBChange(object):
 
         # Создание таблицы, если её нет
         self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS element (
+            CREATE TABLE IF NOT EXISTS elements (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
                 value INTEGER
@@ -55,7 +56,7 @@ class WindowDBChange(object):
         value = self.text_field.get()
 
         # Запись в базу данных
-        self.cursor.execute("INSERT INTO element (name, value) VALUES (?, ?)", (element, value))
+        self.cursor.execute("INSERT INTO elements (name, value) VALUES (?, ?)", (element, value))
         self.connection.commit()
 
     def get_from_bd(self):
@@ -68,4 +69,4 @@ class WindowDBChange(object):
         if rezult:
             print(f"Значение для {element}: {rezult[0]}")
         else:
-            print(f"Нет данных для {element}")
+            print(f"Значение для {element}: ~~~")
